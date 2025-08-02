@@ -174,17 +174,6 @@ const getUser = async (req, res) => {
   }
 };
 
-const getUsers = async (req, res) => {
-  try {
-    const sortBy = req.body.sortBy || { score: -1 };
-    const result = await User.getAll(sortBy);
-    req.session.users = result.data || [];
-    return result.toJSON();
-  } catch (error) {
-    return new Result(-1, null, `Error getting all users: ${error.message}`).toJSON();
-  }
-};
-
 const removeAllUsers = async (req, res) => {
   try {
     const result = await User.removeAll();
@@ -195,6 +184,16 @@ const removeAllUsers = async (req, res) => {
     return res.json(result.toJSON());
   } catch (error) {
     return res.json(new Result(-1, null, `Error removing users: ${error.message}`).toJSON());
+  }
+}
+
+const getAllUsers = async (req, res) => {
+  try {
+    const sortBy = req.query.sortBy ? JSON.parse(req.query.sortBy) : { score: -1 };
+    const result = await User.getAll(sortBy);
+    return res.json(result.toJSON());
+  } catch (error) {
+    return res.json(new Result(-1, null, `Error getting all users: ${error.message}`).toJSON());
   }
 }
 
@@ -240,7 +239,7 @@ module.exports = {
   _jsonToObject: jsonToObject,
   addUser,
   getUser,
-  getUsers,
+  getAllUsers,
   register,
   login,
   loginAsStudent,

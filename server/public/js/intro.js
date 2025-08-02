@@ -65,10 +65,33 @@ function showPasswordPrompt(name) {
             <p><i class="fas fa-crown"></i> Instructor Access Required</p>
             <p>Please enter your password to continue.</p>
         </div>
-        <input type="password" id="adminPassword" placeholder="Enter password" class="name-input" style="margin-top: 1rem;">
+        <div class="password-input-wrapper" style="position: relative; margin-top: 1rem;">
+            <input type="password" id="adminPassword" placeholder="Enter password" class="name-input" style="padding-right: 45px;">
+            <button type="button" class="password-toggle" id="passwordToggle" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: var(--text-secondary); font-size: 1.1rem; padding: 0; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;">
+                <i class="fas fa-eye" id="passwordToggleIcon"></i>
+            </button>
+        </div>
     `;
     
     document.querySelector('.input-group').appendChild(passwordElement);
+    
+    // Add password toggle functionality
+    const passwordInput = document.getElementById('adminPassword');
+    const passwordToggle = document.getElementById('passwordToggle');
+    const passwordToggleIcon = document.getElementById('passwordToggleIcon');
+    
+    passwordToggle.addEventListener('click', function() {
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+        
+        if (type === 'password') {
+            passwordToggleIcon.className = 'fas fa-eye';
+            passwordToggle.setAttribute('aria-label', 'Show password');
+        } else {
+            passwordToggleIcon.className = 'fas fa-eye-slash';
+            passwordToggle.setAttribute('aria-label', 'Hide password');
+        }
+    });
     
     const submitBtn = document.querySelector('.submit-btn');
     submitBtn.innerHTML = '<span>Instructor Login</span><div class="btn-icon"><i class="fas fa-key"></i></div>';

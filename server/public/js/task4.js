@@ -272,14 +272,62 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Event listeners
-    document.getElementById('checkButton').addEventListener('click', checkAnswers);
+    document.getElementById('checkButton').addEventListener('click', handleButtonClick);
+    
+    function handleButtonClick() {
+        if (userRole === 'INSTRUCTOR') {
+            showSolution();
+        } else {
+            checkAnswers();
+        }
+    }
+
+    function showSolution() {
+        const feedbackList = document.getElementById('feedback-list');
+        const feedbackDiv = document.getElementById('feedback');
+        const scoreDisplay = document.getElementById('score-display');
+        
+        // Clear previous feedback
+        feedbackList.innerHTML = '';
+        
+        testCases.forEach(testCase => {
+            const listItem = document.createElement('li');
+            listItem.className = 'correct';
+            listItem.innerHTML = `
+                <strong>${testCase.label}:</strong> 
+                <i class="fas fa-info-circle"></i> Expected: $${testCase.expectedPrice.toLocaleString()}
+                <br>Pattern: ${testCase.size} sq ft × $${pricePerSqFt}/sq ft = $${testCase.expectedPrice.toLocaleString()}
+            `;
+            feedbackList.appendChild(listItem);
+        });
+        
+        scoreDisplay.innerHTML = `
+            <h3 style="color: var(--primary-cyan); font-size: 1.5rem; margin-bottom: 0.5rem;">
+                Solution displayed for instructor
+            </h3>
+            <p style="color: var(--text-secondary); font-size: 1.1rem;">
+                All house prices follow the pattern: Size × $${pricePerSqFt}/sq ft
+            </p>
+        `;
+        
+        // Show feedback section
+        feedbackDiv.classList.remove('hidden');
+        
+        // Create regression plot
+        createRegressionPlot();
+        
+        // Scroll to feedback
+        feedbackDiv.scrollIntoView({ behavior: 'smooth' });
+        
+        document.getElementById('checkButton').disabled = true;
+    }
     
     // Allow Enter key to submit from input fields
     testCases.forEach(testCase => {
         const input = document.getElementById(testCase.id);
         input.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
-                checkAnswers();
+                handleButtonClick();
             }
         });
     });
@@ -287,7 +335,11 @@ document.addEventListener('DOMContentLoaded', function() {
     // Unified navigation pattern - return to lobby when task is completed
     document.addEventListener('click', function(e) {
         if (e.target.id === 'nextButton' || e.target.closest('#nextButton')) {
-            window.location.href = '/lobby';
+            if (userRole === 'INSTRUCTOR') {
+                window.location.href = '/admin';
+            } else {
+                window.location.href = '/lobby';
+            }
         }
     });
     

@@ -545,3 +545,18 @@ body::-webkit-scrollbar {
         grid-template-columns: 1fr;
     }
 }
+
+
+body::-webkit-scrollbar {
+    display: none;  /* Chrome, Safari, Edge */
+}
+
+html {
+    /* Hide scrollbar for webkit browsers (Chrome, Safari, Edge) */
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
+html::-webkit-scrollbar {
+    display: none;  /* Chrome, Safari, Edge */
+}

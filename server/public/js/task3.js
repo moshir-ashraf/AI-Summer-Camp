@@ -11,7 +11,46 @@ document.addEventListener('DOMContentLoaded', function() {
         second: 'Windwhisper' // Lower probability
     };
 
-    document.getElementById('checkButton').addEventListener('click', () => {
+    document.getElementById('checkButton').addEventListener('click', handleButtonClick);
+
+    function handleButtonClick() {
+        if (userRole === 'INSTRUCTOR') {
+            showSolution();
+        } else {
+            checkAnswers();
+        }
+    }
+
+    function showSolution() {
+        const feedback = [];
+
+        // Show solutions for first three answers
+        for (const [id, correctAnswer] of Object.entries(answers)) {
+            feedback.push({ id, status: 'correct', message: `Mystery Ingredient ${id.slice(-1)}: ${correctAnswer}` });
+        }
+
+        // Show mixture analysis solution
+        feedback.push({ id: 'mixture', status: 'correct', message: `Mystery Ingredient D: Waterleaf (higher probability) + Windwhisper (lower probability)` });
+
+        // Display results
+        document.getElementById('score-display').textContent = `Solution displayed for instructor`;
+        
+        const feedbackList = document.getElementById('feedback-list');
+        feedbackList.innerHTML = '';
+        
+        feedback.forEach(item => {
+            const li = document.createElement('li');
+            li.className = `feedback-item ${item.status}`;
+            li.innerHTML = `<i class="fas fa-info-circle"></i> ${item.message}`;
+            feedbackList.appendChild(li);
+        });
+
+        // Show feedback section
+        document.getElementById('feedback').classList.remove('hidden');
+        document.getElementById('checkButton').disabled = true;
+    }
+
+    function checkAnswers() {
         let score = 0;
         const feedback = [];
 
@@ -69,12 +108,16 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Update score in database
         updateScore(score);
-    });
+    }
 
     // Add next button functionality
     document.addEventListener('click', function(e) {
         if (e.target.id === 'nextButton' || e.target.closest('#nextButton')) {
-            window.location.href = '/lobby';
+            if (userRole === 'INSTRUCTOR') {
+                window.location.href = '/admin';
+            } else {
+                window.location.href = '/lobby';
+            }
         }
     });
 

@@ -2,8 +2,48 @@ document.addEventListener('DOMContentLoaded', function() {
     const answers = { answer1: 'Fly Agaric', answer2: 'Milk Cap', answer3: 'Neither' };
     const labels = ['Mushroom A', 'Mushroom B', 'Mushroom C'];
 
-    document.getElementById('checkButton').addEventListener('click', checkAnswers);
-    document.getElementById('nextButton').addEventListener('click', () => window.location.href = '/lobby');
+    document.getElementById('checkButton').addEventListener('click', handleButtonClick);
+    document.getElementById('nextButton').addEventListener('click', () => {
+        if (userRole === 'INSTRUCTOR') {
+            window.location.href = '/admin';
+        } else {
+            window.location.href = '/lobby';
+        }
+    });
+
+    function handleButtonClick() {
+        if (userRole === 'INSTRUCTOR') {
+            showSolution();
+        } else {
+            checkAnswers();
+        }
+    }
+
+    function showSolution() {
+        const feedbackList = document.getElementById('feedback-list');
+        feedbackList.innerHTML = '';
+
+        // Show all correct answers for instructor
+        for (const id in answers) {
+            const correct = answers[id];
+            const label = labels[parseInt(id.slice(-1)) - 1];
+            
+            const item = document.createElement('li');
+            item.className = 'feedback-item correct';
+
+            if (id === 'answer3') {
+                item.innerHTML = `<i class="fas fa-info-circle"></i> ${label}: Scaly Wood mushroom - neither type!`;
+            } else {
+                item.innerHTML = `<i class="fas fa-info-circle"></i> ${label}: ${correct}`;
+            }
+
+            feedbackList.appendChild(item);
+        }
+
+        document.getElementById('score-display').innerHTML = `Solution displayed for instructor`;
+        document.getElementById('feedback').classList.remove('hidden');
+        document.getElementById('checkButton').disabled = true;
+    }
 
     function checkAnswers() {
         const feedbackList = document.getElementById('feedback-list');

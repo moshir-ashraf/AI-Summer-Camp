@@ -758,6 +758,50 @@ html::-webkit-scrollbar {
     margin: 0;
 }
 
+.password-input-wrapper {
+    position: relative;
+    margin-top: 1rem;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-secondary, rgba(178, 235, 242, 0.7));
+    font-size: 1.1rem;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s ease;
+    z-index: 2;
+}
+
+.password-toggle:hover {
+    color: var(--primary-cyan);
+}
+
+.password-toggle:focus {
+    outline: none;
+    color: var(--primary-cyan);
+}
+
+.password-toggle:focus-visible {
+    outline: 2px solid var(--primary-cyan);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+.password-input-wrapper .name-input {
+    padding-right: 45px;
+}
+
 .password-input {
     width: 100%;
     padding: 1rem;

@@ -739,3 +739,18 @@ body::-webkit-scrollbar {
 .mixture-select:hover {
     border-color: rgba(0, 229, 255, 0.5);
 }
+
+
+body::-webkit-scrollbar {
+    display: none;  /* Chrome, Safari, Edge */
+}
+
+html {
+    /* Hide scrollbar for webkit browsers (Chrome, Safari, Edge) */
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
+html::-webkit-scrollbar {
+    display: none;  /* Chrome, Safari, Edge */
+}

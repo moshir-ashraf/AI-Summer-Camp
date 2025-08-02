@@ -15,7 +15,7 @@
             <div class="header-section">
                 <a href="/lobby" class="back-btn">
                     <i class="fas fa-arrow-left"></i>
-                    Back to Lobby
+                    <%= user.role === 'INSTRUCTOR' ? 'Back to Leaderboard' : 'Back to Lobby' %>
                 </a>
                 <a href="/logout" class="logout-btn">
                     <i class="fas fa-sign-out-alt"></i>
@@ -165,14 +165,16 @@
                     </div>
                 </div>
                 
-                <div class="submit-section">
+                 <div class="submit-section">
                     <button id="checkButton" class="submit-btn">
-                        <span>Check My Answers</span>
+                        <span><%= user.role === 'INSTRUCTOR' ? 'Show Solution' : 'Check My Answers' %></span>
                         <div class="btn-icon">
-                            <i class="fas fa-check"></i>
+                            <i class="fas fa-<%= user.role === 'INSTRUCTOR' ? 'eye' : 'check' %>"></i>
                         </div>
                     </button>
                 </div>
+                <script> const userRole = "<%= user.role %>"; </script>
+                
             </div>
 
             <!-- Feedback Section -->

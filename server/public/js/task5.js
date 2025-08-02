@@ -116,7 +116,54 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Event listeners
-    document.getElementById('checkButton').addEventListener('click', checkAnswers);
+    document.getElementById('checkButton').addEventListener('click', handleButtonClick);
+    
+    function handleButtonClick() {
+        if (userRole === 'INSTRUCTOR') {
+            showSolution();
+        } else {
+            checkAnswers();
+        }
+    }
+
+    function showSolution() {
+        const feedbackList = document.getElementById('feedback-list');
+        const feedbackDiv = document.getElementById('feedback');
+        const scoreDisplay = document.getElementById('score-display');
+        
+        // Clear previous feedback
+        feedbackList.innerHTML = '';
+        
+        testCases.forEach(testCase => {
+            const listItem = document.createElement('li');
+            listItem.className = 'correct';
+            listItem.innerHTML = `
+                <strong>${testCase.label}:</strong> 
+                <i class="fas fa-info-circle"></i> Expected: ${testCase.expectedAnswer}
+                <br><small>${testCase.explanation}</small>
+            `;
+            feedbackList.appendChild(listItem);
+        });
+        
+        // Calculate total points for display
+        const totalPoints = testCases.length * 3;
+        
+        scoreDisplay.innerHTML = `
+            <h3 style="color: var(--primary-cyan); font-size: 1.5rem; margin-bottom: 0.5rem;">
+                Solution displayed for instructor
+            </h3>
+            <p style="color: var(--text-secondary); font-size: 1.1rem;">
+                Maximum possible score: ${totalPoints} points (${testCases.length} reviews × 3 points each)
+            </p>
+        `;
+        
+        // Show feedback section
+        feedbackDiv.classList.remove('hidden');
+        document.getElementById('checkButton').disabled = true;
+        
+        // Scroll to feedback
+        feedbackDiv.scrollIntoView({ behavior: 'smooth' });
+    }
     
     // Allow Enter key to submit from select fields
     testCases.forEach(testCase => {
@@ -133,7 +180,11 @@ document.addEventListener('DOMContentLoaded', function() {
     // Unified navigation pattern - route to final congratulations page when task is completed
     document.addEventListener('click', function(e) {
         if (e.target.id === 'nextButton' || e.target.closest('#nextButton')) {
-            window.location.href = '/final';
+            if (userRole === 'INSTRUCTOR') {
+                window.location.href = '/admin';
+            } else {
+                window.location.href = '/final';
+            }
         }
     });
     
