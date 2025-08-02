@@ -33,7 +33,7 @@ class User {
   }
 
    static async removeAll() {
-    return await User.crudInterface.removeAll(this.role, "STUDENT");
+    return await User.crudInterface.removeAll("STUDENT", "role");
   }
 
   static async updateScore(userId, scoreToAdd, taskNumber = null) {
