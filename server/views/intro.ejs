@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MIU's AI Summer Camp</title>
+    <link rel="stylesheet" href="/css/intro.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Session Message Display -->
+        <% if (typeof message !== 'undefined' && message) { %>
+        <div class="message-container" id="sessionMessage">
+            <div class="message-content">
+                <span class="message-text"><%= message %></span>
+                <button class="message-close" onclick="closeMessage()">&times;</button>
+            </div>
+        </div>
+        <% } %>
+        
+        <header class="hero-section">
+            <h1 class="main-title">Welcome to MIU's AI Summer Camp</h1>
+            <p class="subtitle">Exploring the World of Artificial Intelligence</p>
+        </header>
+
+        <section class="ai-definition">
+            <h2 class="section-title">What is Artificial Intelligence?</h2>
+            <p class="definition-text">
+                Artificial Intelligence is the simulation of human intelligence in machines that are programmed to think and learn like humans.
+            </p>
+            
+            <div class="ai-loop-container">
+                <h3 class="loop-title">The AI Learning Loop</h3>
+                <div class="ai-loop">
+                    <div class="loop-step" id="input-step">
+                        <div class="step-icon">
+                            <i class="fas fa-database"></i>
+                        </div>
+                        <h4>Input Data</h4>
+                        <p>Raw information fed into the system</p>
+                    </div>
+                    
+                    <div class="arrow">
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                    
+                    <div class="loop-step" id="algorithm-step">
+                        <div class="step-icon">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <h4>Algorithm LEARNS</h4>
+                        <p>Processing and pattern recognition</p>
+                    </div>
+                    
+                    <div class="arrow">
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                    
+                    <div class="loop-step" id="output-step">
+                        <div class="step-icon">
+                            <i class="fas fa-lightbulb"></i>
+                        </div>
+                        <h4>Intelligent Outcome</h4>
+                        <p>Smart decisions and predictions</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mission-statement">
+                <h3 class="mission-title">Our Mission</h3>
+                <p class="mission-text">
+                    We are now going to go through some tasks that will help us understand what we mean when we say 
+                    <strong>the goal of AI is to mimic human intelligence</strong>.
+                </p>
+            </div>
+        </section>
+
+        <section class="registration-section">
+            <div class="register-form-container">
+                <h2 class="form-title">Join Our AI Journey</h2>
+                <p class="form-subtitle">Enter your name to get started</p>
+                
+                <form class="register-form" action="/register" method="POST">
+                    <div class="input-group">
+                        <input 
+                            type="text" 
+                            id="userName" 
+                            name="userName" 
+                            placeholder="Enter your name"
+                            required
+                            class="name-input"
+                        >
+                        <label for="userName" class="input-label">Your Name</label>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">
+                        <span>Start Learning</span>
+                        <div class="btn-icon">
+                            <i class="fas fa-rocket"></i>
+                        </div>
+                    </button>
+                </form>
+            </div>
+        </section>
+    </div>
+
+    <script src="/js/intro.js"></script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+{
+  "name": "ai-summer-camp---intro",
+  "version": "1.0.0",
+  "description": "MIU's AI Summer Camp - Intro",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Moshir Ashraf",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^17.2.1",
+    "ejs": "^3.1.10",
+    "electron": "^37.2.5",
+    "express": "^5.1.0",
+    "express-session": "^1.18.2",
+    "mongodb": "^6.18.0",
+    "mongoose": "^8.17.0"
+  },
+  "devDependencies": {
+    "electron-builder": "^26.0.12"
+  }
+}

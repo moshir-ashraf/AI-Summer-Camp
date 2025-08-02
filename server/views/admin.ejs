@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Summer Camp - Admin</title>
+    <link rel="stylesheet" href="/css/admin.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="admin-card">
+            <div class="admin-header">
+                <div class="admin-icon">
+                    <i class="fas fa-crown"></i>
+                </div>
+                <h1 class="admin-title">Admin Dashboard</h1>
+                <p class="admin-subtitle">Welcome back, <%= user.name %>!</p>
+            </div>
+            
+            <div class="admin-content">
+                <div class="welcome-section">
+                    <h2>Welcome to the Admin Panel</h2>
+                    <p>This is your administrative control center for the AI Summer Camp.</p>
+                </div>
+                
+                <div class="admin-actions">
+                    <div class="action-placeholder">
+                        <i class="fas fa-tools"></i>
+                        <p>Admin features coming soon...</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="admin-footer">
+                <button class="logout-btn" onclick="logout()">
+                    <span>Logout</span>
+                    <div class="btn-icon">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/admin.js"></script>
+</body>
+</html>

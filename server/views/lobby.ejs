@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Summer Camp - Lobby</title>
+    <link rel="stylesheet" href="/css/lobby.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="lobby-card">
+            <div class="header-section">
+                <a href="/logout" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </a>
+            </div>
+            
+            <div class="user-section">
+                <div class="user-icon">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <h1 class="user-name">Welcome, <%= user.name %>!</h1>
+            </div>
+            
+            <div class="ai-description">
+                <h2 class="description-title">How AI Works</h2>
+                <p class="description-text">
+                    Artificial Intelligence learns patterns from data and uses these patterns to make decisions. 
+                    When given new information, AI systems compare it to previously learned patterns and 
+                    predict outcomes based on similarities they identify.
+                </p>
+            </div>
+            
+            <div class="action-section">
+                <button class="start-btn" onclick="startLearning()">
+                    <span>Start Task 1</span>
+                    <div class="btn-icon">
+                        <i class="fas fa-play"></i>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/lobby.js"></script>
+</body>
+</html>

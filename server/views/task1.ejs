@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Summer Camp - Task 1</title>
+    <link rel="stylesheet" href="/css/task1.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="task-card">
+            <div class="header-section">
+                <a href="/lobby" class="back-btn">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to Lobby
+                </a>
+                <a href="/logout" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </a>
+            </div>
+
+            <div class="task-header">
+                <h1 class="task-title">Step 1: Your First Classification Challenge</h1>
+                <p class="task-subtitle">Below are two types of mushrooms. Carefully observe their characteristics.</p>
+            </div>
+
+            <!-- Training Data Section -->
+            <div class="training-section">
+                <h2 class="section-title">Training Examples</h2>
+                <div class="training-grid">
+                    <div class="training-item fly-agaric">
+                        <h3 class="item-title">Fly Agaric</h3>
+                        <div class="mushroom-image">
+                            <img src="/images/Task 1/fly agaric 1.jpg" alt="Fly Agaric Example" class="training-img">
+                        </div>
+                    </div>
+                    <div class="training-item milk-cap">
+                        <h3 class="item-title">Milk Cap</h3>
+                        <div class="mushroom-image">
+                            <img src="/images/Task 1/milk cap 1.jpg" alt="Milk Cap Example" class="training-img">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Testing Section -->
+            <div class="testing-section">
+                <h2 class="section-title">Step 2: Classify These New Mushrooms</h2>
+                <p class="section-subtitle">Look at the new pictures below. Based on what you observed, are they a "Fly Agaric" or a "Milk Cap"?</p>
+                
+                <div class="testing-grid">
+                    <div class="test-item">
+                        <div class="mushroom-image">
+                            <img src="/images/Task 1/fly agaric 2.jpg" alt="Mushroom A" class="test-img">
+                        </div>
+                        <label for="answer1" class="test-label">Mushroom A</label>
+                        <select id="answer1" class="answer-select">
+                            <option value="">Choose classification...</option>
+                            <option value="Fly Agaric">Fly Agaric</option>
+                            <option value="Milk Cap">Milk Cap</option>
+                        </select>
+                    </div>
+                    <div class="test-item">
+                        <div class="mushroom-image">
+                            <img src="/images/Task 1/milk cap 2.jpg" alt="Mushroom B" class="test-img">
+                        </div>
+                        <label for="answer2" class="test-label">Mushroom B</label>
+                        <select id="answer2" class="answer-select">
+                            <option value="">Choose classification...</option>
+                            <option value="Fly Agaric">Fly Agaric</option>
+                            <option value="Milk Cap">Milk Cap</option>
+                        </select>
+                    </div>
+                    <div class="test-item">
+                        <div class="mushroom-image">
+                            <img src="/images/Task 1/scaly wood.jpg" alt="Mushroom C" class="test-img">
+                        </div>
+                        <label for="answer3" class="test-label">Mushroom C</label>
+                        <select id="answer3" class="answer-select">
+                            <option value="">Choose classification...</option>
+                            <option value="Fly Agaric">Fly Agaric</option>
+                            <option value="Milk Cap">Milk Cap</option>
+                        </select>
+                    </div>
+                </div>                <div class="submit-section">
+                    <button id="checkButton" class="submit-btn">
+                        <span>Check My Answers</span>
+                        <div class="btn-icon">
+                            <i class="fas fa-check"></i>
+                        </div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Feedback Section -->
+            <div id="feedback" class="feedback-section hidden">
+                <h3 class="feedback-title">Your Results</h3>
+                <div id="score-display" class="score-display"></div>
+                <ul id="feedback-list" class="feedback-list"></ul>
+                
+                <!-- Educational Explanation -->
+                <div id="explanation" class="explanation-section">
+                    <h4 class="explanation-title">What Just Happened?</h4>
+                    <p class="explanation-text">
+                        Your human mind had to extract features to differentiate between these mushrooms, even though 
+                        you weren't explicitly taught what specific characteristics to look for. You naturally observed 
+                        patterns like color, shape, texture, and size to make your classifications.
+                    </p>
+                    <p class="explanation-text">
+                        This is exactly what scientists aspired AI would do! <strong>Deep Learning</strong> is a field 
+                        of artificial intelligence that mimics how our brains work. Just like you automatically extracted 
+                        features from the mushroom images, deep learning algorithms can learn to identify and extract 
+                        meaningful patterns from data on their own, without being explicitly programmed with specific rules.
+                    </p>
+                </div>
+                
+                <div class="next-section">
+                    <button id="nextButton" class="next-btn">
+                        <span>Continue to Task 2</span>
+                        <div class="btn-icon">
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/task1.js"></script>
+</body>
+</html>
