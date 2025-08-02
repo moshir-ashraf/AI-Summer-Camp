@@ -727,6 +727,11 @@ html::-webkit-scrollbar {
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
+.option-btn.primary:hover {
+    background: linear-gradient(135deg, var(--success-green), #45a049);
+    box-shadow: 0 5px 15px rgba(72, 187, 120, 0.4);
+}
+
 .password-field-container {
     margin-top: 1rem;
     animation: fadeInUp 0.3s ease-out;

@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const labels = ['Mushroom A', 'Mushroom B', 'Mushroom C'];
 
     document.getElementById('checkButton').addEventListener('click', checkAnswers);
-    document.getElementById('nextButton').addEventListener('click', () => window.location.href = '/task2');
+    document.getElementById('nextButton').addEventListener('click', () => window.location.href = '/lobby');
 
     function checkAnswers() {
         const feedbackList = document.getElementById('feedback-list');

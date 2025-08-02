@@ -94,6 +94,57 @@ router.get('/task2', (req, res) => {
   }
 })
 
+router.get('/task3', (req, res) => {
+  if (!req.session.user) {
+    return res.redirect('/');
+  }
+  
+  const user = req.session.user;
+  const lastCompleted = user.lastTaskCompleted || 0;
+  
+  // Only allow task 3 if task 2 is completed
+  if (lastCompleted >= 2) {
+    res.render('task3', { user: req.session.user });
+  } else {
+    // Redirect to lobby if trying to access task 3 without completing task 2
+    return res.redirect('/lobby');
+  }
+})
+
+router.get('/task4', (req, res) => {
+  if (!req.session.user) {
+    return res.redirect('/');
+  }
+  
+  const user = req.session.user;
+  const lastCompleted = user.lastTaskCompleted || 0;
+  
+  // Only allow task 4 if task 3 is completed
+  if (lastCompleted >= 3) {
+    res.render('task4', { user: req.session.user });
+  } else {
+    // Redirect to lobby if trying to access task 4 without completing task 3
+    return res.redirect('/lobby');
+  }
+})
+
+router.get('/task5', (req, res) => {
+  if (!req.session.user) {
+    return res.redirect('/');
+  }
+  
+  const user = req.session.user;
+  const lastCompleted = user.lastTaskCompleted || 0;
+  
+  // Only allow task 5 if task 4 is completed
+  if (lastCompleted >= 4) {
+    res.render('task5', { user: req.session.user });
+  } else {
+    // Redirect to lobby if trying to access task 5 without completing task 4
+    return res.redirect('/lobby');
+  }
+})
+
 router.post('/login', controller.login)
 router.post('/loginAsStudent', controller.loginAsStudent)
 router.get('/logout', controller.logout)
