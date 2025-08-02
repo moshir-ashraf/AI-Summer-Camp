@@ -12,18 +12,41 @@ router.get('/', (req, res) => {
   res.render('intro', { message });
 })
 
-router.get('/lobby', (req, res) => {
+router.get('/lobby', async (req, res) => {
   if (!req.session.user) {
     return res.redirect('/');
   }
   
-  const user = req.session.user;
-  const nextTask = (user.lastTaskCompleted || 0) + 1;
-  
-  res.render('lobby', { 
-    user: user,
-    nextTask: nextTask
-  });
+  try {
+    // Refresh user data from database to get latest lastTaskCompleted
+    const User = require('./model');
+    const userResult = await User.get(req.session.user._id, '_id');
+    
+    let user = req.session.user;
+    if (userResult.success.status) {
+      // Update session with fresh data
+      req.session.user.lastTaskCompleted = userResult.data.lastTaskCompleted;
+      req.session.user.score = userResult.data.score;
+      user = req.session.user;
+    }
+    
+    const nextTask = (user.lastTaskCompleted || 0) + 1;
+    
+    res.render('lobby', { 
+      user: user,
+      nextTask: nextTask
+    });
+  } catch (error) {
+    console.error('Error refreshing user data:', error);
+    // Fallback to session data
+    const user = req.session.user;
+    const nextTask = (user.lastTaskCompleted || 0) + 1;
+    
+    res.render('lobby', { 
+      user: user,
+      nextTask: nextTask
+    });
+  }
 })
 
 router.get('/admin', (req, res) => {

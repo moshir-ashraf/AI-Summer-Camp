@@ -23,6 +23,11 @@
                     <i class="fas fa-user-circle"></i>
                 </div>
                 <h1 class="user-name">Welcome, <%= user.name %>!</h1>
+                <div class="score-section">
+                    <div class="score-display">
+                        <span class="score-text">Current Score: <%= user.score || 0 %> points</span>
+                    </div>
+                </div>
             </div>
             
             <div class="ai-description">

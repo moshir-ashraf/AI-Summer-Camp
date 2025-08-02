@@ -97,6 +97,50 @@ body::-webkit-scrollbar {
     text-shadow: 0 0 10px rgba(0, 229, 255, 0.3);
 }
 
+.score-section {
+    margin-top: 1rem;
+}
+
+.score-display {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background: rgba(76, 175, 80, 0.1);
+    border: 1px solid rgba(76, 175, 80, 0.3);
+    border-radius: 10px;
+    padding: 0.8rem 1.5rem;
+    margin: 0 auto;
+    max-width: 250px;
+    transition: all 0.3s ease;
+}
+
+.score-display:hover {
+    background: rgba(76, 175, 80, 0.2);
+    border-color: #4caf50;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+}
+
+.score-display i {
+    color: #ffd700;
+    font-size: 1.2rem;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+    animation: sparkle 2s infinite;
+}
+
+.score-text {
+    color: #4caf50;
+    font-weight: 600;
+    font-size: 1.1rem;
+    text-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
+}
+
+@keyframes sparkle {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
 /* AI Description Section */
 .ai-description {
     margin-bottom: 3rem;
