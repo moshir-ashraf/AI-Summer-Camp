@@ -32,6 +32,11 @@ router.get('/lobby', async (req, res) => {
     
     const nextTask = (user.lastTaskCompleted || 0) + 1;
     
+    // If all tasks are completed (lastTaskCompleted is 5), redirect to final page
+    if (user.lastTaskCompleted >= 5) {
+      return res.redirect('/final');
+    }
+    
     res.render('lobby', { 
       user: user,
       nextTask: nextTask
@@ -41,6 +46,11 @@ router.get('/lobby', async (req, res) => {
     // Fallback to session data
     const user = req.session.user;
     const nextTask = (user.lastTaskCompleted || 0) + 1;
+    
+    // If all tasks are completed (lastTaskCompleted is 5), redirect to final page
+    if (user.lastTaskCompleted >= 5) {
+      return res.redirect('/final');
+    }
     
     res.render('lobby', { 
       user: user,
@@ -142,6 +152,46 @@ router.get('/task5', (req, res) => {
   } else {
     // Redirect to lobby if trying to access task 5 without completing task 4
     return res.redirect('/lobby');
+  }
+})
+
+router.get('/final', async (req, res) => {
+  if (!req.session.user) {
+    return res.redirect('/');
+  }
+  
+  try {
+    // Refresh user data from database to get latest score
+    const User = require('./model');
+    const userResult = await User.get(req.session.user._id, '_id');
+    
+    let user = req.session.user;
+    if (userResult.success.status) {
+      // Update session with fresh data
+      req.session.user.score = userResult.data.score;
+      user = req.session.user;
+    }
+    
+    const lastCompleted = user.lastTaskCompleted || 0;
+    
+    // Only allow final page if task 5 is completed
+    if (lastCompleted >= 5) {
+      res.render('final', { user: user });
+    } else {
+      // Redirect to lobby if trying to access final page without completing task 5
+      return res.redirect('/lobby');
+    }
+  } catch (error) {
+    console.error('Error refreshing user data:', error);
+    // Fallback to session data
+    const user = req.session.user;
+    const lastCompleted = user.lastTaskCompleted || 0;
+    
+    if (lastCompleted >= 5) {
+      res.render('final', { user: user });
+    } else {
+      return res.redirect('/lobby');
+    }
   }
 })
 

@@ -130,10 +130,10 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Unified navigation pattern - return to lobby when task is completed
+    // Unified navigation pattern - route to final congratulations page when task is completed
     document.addEventListener('click', function(e) {
         if (e.target.id === 'nextButton' || e.target.closest('#nextButton')) {
-            window.location.href = '/lobby';
+            window.location.href = '/final';
         }
     });
     

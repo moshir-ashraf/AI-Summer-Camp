@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Summer Camp - Congratulations!</title>
+    <link rel="stylesheet" href="/css/final.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="lobby-card">
+            <div class="header-section">
+                <a href="/logout" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </a>
+            </div>
+            
+            <div class="user-section">
+                <div class="celebration-icon">
+                    <i class="fas fa-trophy"></i>
+                </div>
+                <h1 class="congratulations-title">Congratulations, <%= user.name %>!</h1>
+                <div class="achievement-text">
+                    <p>You've successfully completed the INTRODUCTION! (Yes, this is just the introduction!)</p>
+                </div>
+                <div class="score-section">
+                    <div class="final-score-display">
+                        <span class="score-label">Final Score:</span>
+                        <span class="score-value"><%= user.score || 0 %> points</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="ai-description">
+                <h2 class="description-title">The Foundation of AI: Programming</h2>
+                <p class="description-text">
+                    All these remarkable AI advances, from recognizing patterns to understanding human language, are only 
+                    made possible because machines can <strong>mimic human intelligence</strong>. But how do we bridge 
+                    the gap between human thinking and machine processing?
+                </p>
+                <p class="description-text">
+                    The first step in mimicking human intelligence is learning <strong>communication</strong>. Just as 
+                    humans use language to express thoughts and ideas, we need a way to communicate our logic to machines.
+                </p>
+                <p class="description-text highlight-section">
+                    This is where <strong>programming</strong> becomes crucial. Programming is the language that helps us 
+                    adapt our human logic into <span class="highlight">machine-ready instructions</span>. It's the 
+                    bridge that transforms our creative problem-solving abilities into code that computers can execute.
+                </p>
+                <p class="description-text">
+                    Every AI system you've learned about—classification, regression, natural language processing—begins 
+                    with programmers writing code that teaches machines to think and learn. Programming isn't just about 
+                    writing instructions; it's about <strong>translating human intelligence into digital form</strong>.
+                </p>
+            </div>
+            
+            <div class="journey-complete">
+                <div class="journey-icon">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <h3 class="journey-title">Let's start coding!</h3>
+                <p class="journey-text">
+                    You've explored the fascinating world of Artificial Intelligence and discovered the power of programming 
+                    as the foundation that makes it all possible. Let's embark on the next step of your journey
+                    together and dive into the world of coding!
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/final.js"></script>
+</body>
+</html>
