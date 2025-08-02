@@ -339,8 +339,8 @@ body::-webkit-scrollbar {
 }
 
 .unclear-explanation {
-    background: transparent;
-    border: none;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 10px;
     padding: 1.5rem;
     margin-bottom: 2rem;
@@ -363,6 +363,39 @@ body::-webkit-scrollbar {
 .unclear-item .feature-tags li {
     font-size: 0.75rem;
     padding: 0.25rem 0.6rem;
+}
+
+/* Educational Connection Section */
+.educational-connection {
+    background: rgba(15, 32, 39, 0.8);
+    border: 1px solid rgba(0, 229, 255, 0.2);
+    border-radius: 15px;
+    padding: 2rem;
+    margin: 2rem 0;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+.connection-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--primary-cyan);
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.connection-text {
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+    text-align: left;
+}
+
+.connection-text:last-child {
+    margin-bottom: 0;
+}
+
+.connection-text strong {
+    color: var(--text-primary);
 }
 
 /* Testing Section */
