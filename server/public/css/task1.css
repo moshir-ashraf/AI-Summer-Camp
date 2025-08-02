@@ -228,7 +228,6 @@ body::-webkit-scrollbar {
 }
 
 .test-item:hover {
-    transform: translateY(-3px);
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
 }
 
@@ -277,8 +276,12 @@ body::-webkit-scrollbar {
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
-    overflow: hidden;
-    max-height: 3rem;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.answer-select::-webkit-scrollbar {
+    display: none;
 }
 
 .answer-select:focus {

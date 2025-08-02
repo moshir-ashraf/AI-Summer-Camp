@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', function() {
             await fetch('/updateScore', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ score })
+                body: JSON.stringify({ score, taskNumber: 1 })
             });
         } catch (error) {
             console.error('Score update failed:', error);

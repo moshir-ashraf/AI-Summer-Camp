@@ -36,7 +36,7 @@ class User {
     return await User.crudInterface.removeAll(this.role, "STUDENT");
   }
 
-  static async updateScore(userId, scoreToAdd) {
+  static async updateScore(userId, scoreToAdd, taskNumber = null) {
     try {
       const result = await User.get(userId, '_id');
       if (!result.success.status) {
@@ -45,11 +45,22 @@ class User {
 
       const user = result.data;
       user.score = (user.score || 0) + scoreToAdd;
+      
+      const updateData = { score: user.score };
+      
+      // Update lastTaskCompleted if taskNumber is provided
+      if (taskNumber !== null) {
+        user.lastTaskCompleted = Math.max(user.lastTaskCompleted || 0, taskNumber);
+        updateData.lastTaskCompleted = user.lastTaskCompleted;
+      }
 
       // Update the user in database
-      const updateResult = await User.crudInterface.update(userId, { score: user.score }, '_id');
+      const updateResult = await User.crudInterface.update(userId, updateData, '_id');
       if (updateResult.success.status) {
-        return new Result(1, updateResult.data, `Score updated: +${scoreToAdd} points. Total: ${user.score}`);
+        const message = taskNumber ? 
+          `Task ${taskNumber} completed! Score updated: +${scoreToAdd} points. Total: ${user.score}` :
+          `Score updated: +${scoreToAdd} points. Total: ${user.score}`;
+        return new Result(1, updateResult.data, message);
       } else {
         return new Result(0, null, "Failed to update score.");
       }

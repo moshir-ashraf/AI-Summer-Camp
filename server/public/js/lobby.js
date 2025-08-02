@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     document.querySelector('.start-btn')?.addEventListener('click', () => {
-        window.location.href = '/task1';
+        const taskNumber = window.nextTask || 1;
+        window.location.href = `/task${taskNumber}`;
     });
 });

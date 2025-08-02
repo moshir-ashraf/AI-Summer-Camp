@@ -16,7 +16,14 @@ router.get('/lobby', (req, res) => {
   if (!req.session.user) {
     return res.redirect('/');
   }
-  res.render('lobby', { user: req.session.user });
+  
+  const user = req.session.user;
+  const nextTask = (user.lastTaskCompleted || 0) + 1;
+  
+  res.render('lobby', { 
+    user: user,
+    nextTask: nextTask
+  });
 })
 
 router.get('/admin', (req, res) => {
@@ -30,14 +37,38 @@ router.get('/task1', (req, res) => {
   if (!req.session.user) {
     return res.redirect('/');
   }
-  res.render('task1', { user: req.session.user });
+  
+  const user = req.session.user;
+  const lastCompleted = user.lastTaskCompleted || 0;
+  
+  // Only allow task 1 if no tasks completed or task 1 already completed (allow replay of current task)
+  if (lastCompleted >= 1) {
+    // Already completed, allow access
+    res.render('task1', { user: req.session.user });
+  } else if (lastCompleted === 0) {
+    // First task, allow access
+    res.render('task1', { user: req.session.user });
+  } else {
+    // Shouldn't happen, but redirect to lobby
+    return res.redirect('/lobby');
+  }
 })
 
 router.get('/task2', (req, res) => {
   if (!req.session.user) {
     return res.redirect('/');
   }
-  res.render('task2', { user: req.session.user });
+  
+  const user = req.session.user;
+  const lastCompleted = user.lastTaskCompleted || 0;
+  
+  // Only allow task 2 if task 1 is completed
+  if (lastCompleted >= 1) {
+    res.render('task2', { user: req.session.user });
+  } else {
+    // Redirect to lobby if trying to access task 2 without completing task 1
+    return res.redirect('/lobby');
+  }
 })
 
 router.post('/login', controller.login)

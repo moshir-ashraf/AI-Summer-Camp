@@ -204,15 +204,18 @@ const updateScore = async (req, res) => {
       return res.status(401).json({ success: false, message: 'Not logged in' });
     }
 
-    const { score } = req.body;
+    const { score, taskNumber } = req.body;
     const userId = req.session.user._id;
 
-    // Update user's score in database
-    const result = await User.updateScore(userId, score);
+    // Update user's score and last completed task in database
+    const result = await User.updateScore(userId, score, taskNumber);
     
     if (result.success.status) {
       // Update session data
       req.session.user.score = (req.session.user.score || 0) + score;
+      if (taskNumber) {
+        req.session.user.lastTaskCompleted = Math.max(req.session.user.lastTaskCompleted || 0, taskNumber);
+      }
 
       return res.json({
         success: true,

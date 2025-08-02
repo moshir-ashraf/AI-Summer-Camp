@@ -8,8 +8,10 @@ function initSessionMessage() {
     if (msg) setTimeout(() => msg.remove(), 5000);
 }
 
+let originalFormHandler;
+
 function initForms() {
-    document.querySelector('.register-form')?.addEventListener('submit', async (e) => {
+    originalFormHandler = async (e) => {
         e.preventDefault();
         const name = document.getElementById('userName').value.trim();
         if (name.length < 2) return showMessage('Name must be at least 2 characters', 'error');
@@ -19,7 +21,9 @@ function initForms() {
         }
         
         await submitForm('/register', { userName: name });
-    });
+    };
+    
+    document.querySelector('.register-form')?.addEventListener('submit', originalFormHandler);
 }
 
 async function submitForm(url, data) {
@@ -70,7 +74,7 @@ function showPasswordPrompt(name) {
     submitBtn.innerHTML = '<span>Instructor Login</span><div class="btn-icon"><i class="fas fa-key"></i></div>';
     
     const form = document.querySelector('.register-form');
-    form.removeEventListener('submit', handleFormSubmit);
+    form.removeEventListener('submit', originalFormHandler);
     form.addEventListener('submit', handleInstructorLogin);
     
     setTimeout(() => document.getElementById('adminPassword').focus(), 100);
@@ -174,21 +178,7 @@ function tryDifferentName() {
     // Restore original form handler
     const form = document.querySelector('.register-form');
     form.removeEventListener('submit', handleInstructorLogin);
-    const newForm = form.cloneNode(true);
-    form.parentNode.replaceChild(newForm, form);
-    
-    // Re-attach the original form handler
-    newForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const name = document.getElementById('userName').value.trim();
-        if (name.length < 2) return showMessage('Name must be at least 2 characters', 'error');
-        
-        if (name.toLowerCase() === 'moshir ashraf') {
-            return showPasswordPrompt(name);
-        }
-        
-        await submitForm('/register', { userName: name });
-    });
+    form.addEventListener('submit', originalFormHandler);
 }
 
 function setButtonLoading(button, text) {
