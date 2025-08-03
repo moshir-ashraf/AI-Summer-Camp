@@ -1,5 +1,15 @@
 const { app, BrowserWindow, screen } = require('electron')
-require('dotenv').config()
+const path = require('path')
+
+// Set production environment for packaged app
+if (app.isPackaged) {
+  process.env.NODE_ENV = 'production';
+}
+
+// Configure dotenv for development
+if (!app.isPackaged) {
+  require('dotenv').config({ path: path.join(__dirname, '.env') });
+}
 
 const expressApp = require('./server/app') 
 const port = process.env.PORT || 3000
