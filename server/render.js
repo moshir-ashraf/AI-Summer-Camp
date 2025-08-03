@@ -1,5 +1,4 @@
 const User = require("./user");
-const Result = require("./result");
 
 // Route handler functions
 const renderIntro = (req, res) => {
