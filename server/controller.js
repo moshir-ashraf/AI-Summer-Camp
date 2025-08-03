@@ -278,7 +278,8 @@ const startGame = async (req, res) => {
       return res.status(403).json({ success: false, message: 'Only instructors can start the game' });
     }
 
-    const result = await GameState.startGame(req.session.user._id);
+    const { gameName } = req.body;
+    const result = await GameState.startGame(req.session.user._id, gameName);
     return res.json(result.toJSON());
   } catch (error) {
     return res.json(new Result(-1, null, `Error starting game: ${error.message}`).toJSON());
@@ -309,11 +310,11 @@ const updateGameSettings = async (req, res) => {
       return res.status(403).json({ success: false, message: 'Only instructors can update game settings' });
     }
 
-    const { settings } = req.body;
-    const result = await GameState.updateSettings(settings, req.session.user._id);
+    const { gameName } = req.body;
+    const result = await GameState.updateGameName(gameName, req.session.user._id);
     return res.json(result.toJSON());
   } catch (error) {
-    return res.json(new Result(-1, null, `Error updating game settings: ${error.message}`).toJSON());
+    return res.json(new Result(-1, null, `Error updating game name: ${error.message}`).toJSON());
   }
 }
 

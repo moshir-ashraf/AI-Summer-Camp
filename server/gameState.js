@@ -10,11 +10,8 @@ class GameState {
     this.id = gameStateJSON.id;
     this.isPaused = gameStateJSON.is_paused || gameStateJSON.isPaused || false;
     this.currentTask = gameStateJSON.current_task || gameStateJSON.currentTask || 1;
-    this.startTime = gameStateJSON.start_time || gameStateJSON.startTime;
-    this.pauseTime = gameStateJSON.pause_time || gameStateJSON.pauseTime;
-    this.totalPauseDuration = gameStateJSON.total_pause_duration || gameStateJSON.totalPauseDuration || 0;
     this.instructorId = gameStateJSON.instructor_id || gameStateJSON.instructorId;
-    this.settings = gameStateJSON.settings || {};
+    this.gameName = gameStateJSON.game_name || gameStateJSON.gameName;
     this.createdAt = gameStateJSON.created_at || gameStateJSON.createdAt;
     this.updatedAt = gameStateJSON.updated_at || gameStateJSON.updatedAt;
   }
@@ -41,7 +38,7 @@ class GameState {
       const defaultData = {
         isPaused: false,
         currentTask: 1,
-        settings: {}
+        gameName: 'AI Summer Camp Game'
       };
 
       // For game state, we'll directly insert without checking for duplicates
@@ -50,7 +47,7 @@ class GameState {
         .insert([{
           is_paused: defaultData.isPaused,
           current_task: defaultData.currentTask,
-          settings: defaultData.settings
+          game_name: defaultData.gameName
         }])
         .select()
         .single();
@@ -72,7 +69,6 @@ class GameState {
 
       const updateData = {
         isPaused: true,
-        pauseTime: new Date().toISOString(),
         instructorId: instructorId
       };
 
@@ -94,24 +90,12 @@ class GameState {
         return currentResult;
       }
 
-      const gameState = currentResult.data;
-      let additionalPauseDuration = 0;
-
-      // Calculate additional pause duration if game was paused
-      if (gameState.isPaused && gameState.pauseTime) {
-        const pauseStart = new Date(gameState.pauseTime);
-        const now = new Date();
-        additionalPauseDuration = Math.floor((now - pauseStart) / 1000); // in seconds
-      }
-
       const updateData = {
         isPaused: false,
-        pauseTime: null,
-        totalPauseDuration: gameState.totalPauseDuration + additionalPauseDuration,
         instructorId: instructorId
       };
 
-      const result = await GameState.crudInterface.update(GameState.tableName, gameState.id, updateData, 'id');
+      const result = await GameState.crudInterface.update(GameState.tableName, currentResult.data.id, updateData, 'id');
       if (result.success.status) {
         return new Result(1, new GameState(result.data), "Game resumed successfully.");
       } else {
@@ -122,16 +106,17 @@ class GameState {
     }
   }
 
-  static async startGame(instructorId) {
+  static async startGame(instructorId, gameName = null) {
     try {
       const updateData = {
         isPaused: false,
-        startTime: new Date().toISOString(),
-        pauseTime: null,
-        totalPauseDuration: 0,
         currentTask: 1,
         instructorId: instructorId
       };
+
+      if (gameName) {
+        updateData.gameName = gameName;
+      }
 
       // Get current game state or create new one
       const currentResult = await GameState.get();
@@ -148,6 +133,9 @@ class GameState {
         }
       } else {
         // Create new game state
+        if (!gameName) {
+          updateData.gameName = 'AI Summer Camp Game';
+        }
         const result = await GameState.crudInterface.create(GameState.tableName, updateData, 'id');
         if (result.success.status) {
           return new Result(1, new GameState(result.data), "Game started successfully.");
@@ -183,7 +171,7 @@ class GameState {
     }
   }
 
-  static async updateSettings(settings, instructorId) {
+  static async updateGameName(gameName, instructorId) {
     try {
       const currentResult = await GameState.get();
       if (!currentResult.success.status) {
@@ -191,18 +179,18 @@ class GameState {
       }
 
       const updateData = {
-        settings: settings,
+        gameName: gameName,
         instructorId: instructorId
       };
 
       const result = await GameState.crudInterface.update(GameState.tableName, currentResult.data.id, updateData, 'id');
       if (result.success.status) {
-        return new Result(1, new GameState(result.data), "Game settings updated successfully.");
+        return new Result(1, new GameState(result.data), "Game name updated successfully.");
       } else {
         return result;
       }
     } catch (error) {
-      return new Result(-1, null, `Error updating game settings: ${error.message}.`);
+      return new Result(-1, null, `Error updating game name: ${error.message}.`);
     }
   }
 }

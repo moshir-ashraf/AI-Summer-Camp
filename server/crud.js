@@ -17,18 +17,14 @@ const fieldMappings = {
     camelToSnake: {
       isPaused: 'is_paused',
       currentTask: 'current_task',
-      startTime: 'start_time',
-      pauseTime: 'pause_time',
-      totalPauseDuration: 'total_pause_duration',
-      instructorId: 'instructor_id'
+      instructorId: 'instructor_id',
+      gameName: 'game_name'
     },
     snakeToCamel: {
       is_paused: 'isPaused',
       current_task: 'currentTask',
-      start_time: 'startTime',
-      pause_time: 'pauseTime',
-      total_pause_duration: 'totalPauseDuration',
       instructor_id: 'instructorId',
+      game_name: 'gameName',
       created_at: 'createdAt',
       updated_at: 'updatedAt'
     }
