@@ -10,10 +10,6 @@ router.get('/admin', render.renderAdmin)
 
 // Task routes
 router.get('/task1', render.renderTask1)
-router.get('/task2', render.renderTask2)
-router.get('/task3', render.renderTask3)
-router.get('/task4', render.renderTask4)
-router.get('/task5', render.renderTask5)
 
 // Final route
 router.get('/final', render.renderFinal)

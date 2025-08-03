@@ -32,7 +32,7 @@ const renderLobby = async (req, res) => {
     
     const nextTask = (user.lastTaskCompleted || 0) + 1;
     
-    if (user.lastTaskCompleted >= 5) {
+    if (user.lastTaskCompleted >= 1) {
       return res.redirect('/final');
     }
     
@@ -45,7 +45,7 @@ const renderLobby = async (req, res) => {
     const user = req.session.user;
     const nextTask = (user.lastTaskCompleted || 0) + 1;
     
-    if (user.lastTaskCompleted >= 5) {
+    if (user.lastTaskCompleted >= 1) {
       return res.redirect('/final');
     }
     
@@ -106,98 +106,6 @@ const renderTask1 = (req, res) => {
   }
 }
 
-const renderTask2 = (req, res) => {
-  if (!req.session.user) {
-    return res.redirect('/');
-  }
-  
-  const user = req.session.user;
-  
-  // Instructors have access to all tasks
-  if (user.role === 'INSTRUCTOR') {
-    return res.render('task2', { user: req.session.user });
-  }
-  
-  const lastCompleted = user.lastTaskCompleted || 0;
-  
-  // Only allow task 2 if task 1 is completed
-  if (lastCompleted >= 1) {
-    res.render('task2', { user: req.session.user });
-  } else {
-    // Redirect to lobby if trying to access task 2 without completing task 1
-    return res.redirect('/lobby');
-  }
-}
-
-const renderTask3 = (req, res) => {
-  if (!req.session.user) {
-    return res.redirect('/');
-  }
-  
-  const user = req.session.user;
-  
-  // Instructors have access to all tasks
-  if (user.role === 'INSTRUCTOR') {
-    return res.render('task3', { user: req.session.user });
-  }
-  
-  const lastCompleted = user.lastTaskCompleted || 0;
-  
-  // Only allow task 3 if task 2 is completed
-  if (lastCompleted >= 2) {
-    res.render('task3', { user: req.session.user });
-  } else {
-    // Redirect to lobby if trying to access task 3 without completing task 2
-    return res.redirect('/lobby');
-  }
-}
-
-const renderTask4 = (req, res) => {
-  if (!req.session.user) {
-    return res.redirect('/');
-  }
-  
-  const user = req.session.user;
-  
-  // Instructors have access to all tasks
-  if (user.role === 'INSTRUCTOR') {
-    return res.render('task4', { user: req.session.user });
-  }
-  
-  const lastCompleted = user.lastTaskCompleted || 0;
-  
-  // Only allow task 4 if task 3 is completed
-  if (lastCompleted >= 3) {
-    res.render('task4', { user: req.session.user });
-  } else {
-    // Redirect to lobby if trying to access task 4 without completing task 3
-    return res.redirect('/lobby');
-  }
-}
-
-const renderTask5 = (req, res) => {
-  if (!req.session.user) {
-    return res.redirect('/');
-  }
-  
-  const user = req.session.user;
-  
-  // Instructors have access to all tasks
-  if (user.role === 'INSTRUCTOR') {
-    return res.render('task5', { user: req.session.user });
-  }
-  
-  const lastCompleted = user.lastTaskCompleted || 0;
-  
-  // Only allow task 5 if task 4 is completed
-  if (lastCompleted >= 4) {
-    res.render('task5', { user: req.session.user });
-  } else {
-    // Redirect to lobby if trying to access task 5 without completing task 4
-    return res.redirect('/lobby');
-  }
-}
-
 const renderFinal = async (req, res) => {
   if (!req.session.user) {
     return res.redirect('/');
@@ -216,11 +124,11 @@ const renderFinal = async (req, res) => {
     
     const lastCompleted = user.lastTaskCompleted || 0;
     
-    // Only allow final page if task 5 is completed
-    if (lastCompleted >= 5) {
+    // Only allow final page if task 1 is completed
+    if (lastCompleted >= 1) {
       res.render('final', { user: user });
     } else {
-      // Redirect to lobby if trying to access final page without completing task 5
+      // Redirect to lobby if trying to access final page without completing task 1
       return res.redirect('/lobby');
     }
   } catch (error) {
@@ -229,7 +137,7 @@ const renderFinal = async (req, res) => {
     const user = req.session.user;
     const lastCompleted = user.lastTaskCompleted || 0;
     
-    if (lastCompleted >= 5) {
+    if (lastCompleted >= 1) {
       res.render('final', { user: user });
     } else {
       return res.redirect('/lobby');
@@ -249,10 +157,6 @@ module.exports = {
   renderLobby,
   renderAdmin,
   renderTask1,
-  renderTask2,
-  renderTask3,
-  renderTask4,
-  renderTask5,
   renderFinal,
   handleDefaultRoute
 };
