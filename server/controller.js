@@ -1,4 +1,5 @@
-const User = require("./model");
+const User = require("./user");
+const GameState = require("./gameState");
 const Result = require("./result");
 
 const jsonToObject = (json, role = "STUDENT") => new User(json, role);
@@ -235,6 +236,87 @@ const updateScore = async (req, res) => {
   }
 }
 
+// Game State Management Functions
+const getGameState = async (req, res) => {
+  try {
+    const result = await GameState.get();
+    return res.json(result.toJSON());
+  } catch (error) {
+    return res.json(new Result(-1, null, `Error getting game state: ${error.message}`).toJSON());
+  }
+}
+
+const pauseGame = async (req, res) => {
+  try {
+    if (!req.session.user || req.session.user.role !== 'INSTRUCTOR') {
+      return res.status(403).json({ success: false, message: 'Only instructors can pause the game' });
+    }
+
+    const result = await GameState.pauseGame(req.session.user._id);
+    return res.json(result.toJSON());
+  } catch (error) {
+    return res.json(new Result(-1, null, `Error pausing game: ${error.message}`).toJSON());
+  }
+}
+
+const resumeGame = async (req, res) => {
+  try {
+    if (!req.session.user || req.session.user.role !== 'INSTRUCTOR') {
+      return res.status(403).json({ success: false, message: 'Only instructors can resume the game' });
+    }
+
+    const result = await GameState.resumeGame(req.session.user._id);
+    return res.json(result.toJSON());
+  } catch (error) {
+    return res.json(new Result(-1, null, `Error resuming game: ${error.message}`).toJSON());
+  }
+}
+
+const startGame = async (req, res) => {
+  try {
+    if (!req.session.user || req.session.user.role !== 'INSTRUCTOR') {
+      return res.status(403).json({ success: false, message: 'Only instructors can start the game' });
+    }
+
+    const result = await GameState.startGame(req.session.user._id);
+    return res.json(result.toJSON());
+  } catch (error) {
+    return res.json(new Result(-1, null, `Error starting game: ${error.message}`).toJSON());
+  }
+}
+
+const setCurrentTask = async (req, res) => {
+  try {
+    if (!req.session.user || req.session.user.role !== 'INSTRUCTOR') {
+      return res.status(403).json({ success: false, message: 'Only instructors can set current task' });
+    }
+
+    const { taskNumber } = req.body;
+    if (!taskNumber || taskNumber < 1 || taskNumber > 5) {
+      return res.status(400).json({ success: false, message: 'Invalid task number. Must be between 1 and 5.' });
+    }
+
+    const result = await GameState.setCurrentTask(taskNumber, req.session.user._id);
+    return res.json(result.toJSON());
+  } catch (error) {
+    return res.json(new Result(-1, null, `Error setting current task: ${error.message}`).toJSON());
+  }
+}
+
+const updateGameSettings = async (req, res) => {
+  try {
+    if (!req.session.user || req.session.user.role !== 'INSTRUCTOR') {
+      return res.status(403).json({ success: false, message: 'Only instructors can update game settings' });
+    }
+
+    const { settings } = req.body;
+    const result = await GameState.updateSettings(settings, req.session.user._id);
+    return res.json(result.toJSON());
+  } catch (error) {
+    return res.json(new Result(-1, null, `Error updating game settings: ${error.message}`).toJSON());
+  }
+}
+
 module.exports = {
   _jsonToObject: jsonToObject,
   addUser,
@@ -245,6 +327,12 @@ module.exports = {
   loginAsStudent,
   logout,
   removeAllUsers,
-  updateScore
+  updateScore,
+  getGameState,
+  pauseGame,
+  resumeGame,
+  startGame,
+  setCurrentTask,
+  updateGameSettings
 };
 

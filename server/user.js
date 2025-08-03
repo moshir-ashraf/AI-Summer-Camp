@@ -7,20 +7,24 @@ class User {
 
   static crudInterface = crudInterface;
   static jsonToObject = jsonToObject;
+  static tableName = 'users';
 
   constructor(userJSON, role = "STUDENT") {
     User.jsonToObject(this, userJSON, !userJSON.role ? {role: role }: null);
   }
+  
   static async get(key, by="name") {
-    const result = await User.crudInterface.get(key,  by);
-    if (result.success.status) result.data =  new User(result.data, result.data.role);
+    const result = await User.crudInterface.get(User.tableName, key, by);
+    if (result.success.status) result.data = new User(result.data, result.data.role);
     return result
   }
+  
   static async getAll(sortBy=null) {
-    const result = await User.crudInterface.getAllFilteredSorted('STUDENT', 'role', sortBy);
-    if (result.success.status) result.data =  result.data.map(user => new User(user, user.role));
+    const result = await User.crudInterface.getAllFilteredSorted(User.tableName, 'STUDENT', 'role', sortBy);
+    if (result.success.status) result.data = result.data.map(user => new User(user, user.role));
     return result
   }
+  
   static async login(name, password) {
     const result = await User.get(name);
     if (!result.success.status) return result;
@@ -33,12 +37,12 @@ class User {
   }
 
    static async removeAll() {
-    return await User.crudInterface.removeAll("STUDENT", "role");
+    return await User.crudInterface.removeAll(User.tableName, "STUDENT", "role");
   }
 
   static async updateScore(userId, scoreToAdd, taskNumber = null) {
     try {
-      const result = await User.get(userId, '_id');
+      const result = await User.get(userId, 'id');
       if (!result.success.status) {
         return new Result(0, null, "User not found.");
       }
@@ -55,7 +59,7 @@ class User {
       }
 
       // Update the user in database
-      const updateResult = await User.crudInterface.update(userId, updateData, '_id');
+      const updateResult = await User.crudInterface.update(User.tableName, userId, updateData, 'id');
       if (updateResult.success.status) {
         const message = taskNumber ? 
           `Task ${taskNumber} completed! Score updated: +${scoreToAdd} points. Total: ${user.score}` :
@@ -70,7 +74,7 @@ class User {
   }
 
   async create() {
-    const result = await User.crudInterface.create(this,  "name");
+    const result = await User.crudInterface.create(User.tableName, this, "name");
     if(result.success.status) result.data = User.jsonToObject(this, result.data)
     return result
   }

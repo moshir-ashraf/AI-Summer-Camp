@@ -1,4 +1,4 @@
-const User = require("./model");
+const User = require("./user");
 const Result = require("./result");
 
 // Route handler functions

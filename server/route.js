@@ -27,6 +27,14 @@ router.post('/updateScore', controller.updateScore)
 router.get('/api/leaderboard', controller.getAllUsers)
 router.post('/api/removeAll', controller.removeAllUsers)
 
+// Game State API routes
+router.get('/api/gameState', controller.getGameState)
+router.post('/api/pauseGame', controller.pauseGame)
+router.post('/api/resumeGame', controller.resumeGame)
+router.post('/api/startGame', controller.startGame)
+router.post('/api/setCurrentTask', controller.setCurrentTask)
+router.post('/api/updateGameSettings', controller.updateGameSettings)
+
 // Default route handler
 router.use(render.handleDefaultRoute)
 
