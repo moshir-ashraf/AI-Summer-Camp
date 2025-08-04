@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Summer Camp - Core Python Programming Recap</title>
+    <link rel="stylesheet" href="/css/task1.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="task-card">
+            <div class="header-section">
+                <a href="<%= user.role === 'INSTRUCTOR' ? '/admin' : '/lobby' %>" class="back-btn">
+                    <i class="fas fa-arrow-left"></i>
+                    <%= user.role === 'INSTRUCTOR' ? 'Back to Admin' : 'Back to Lobby' %>
+                </a>
+                <a href="/logout" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </a>
+            </div>
+
+            <div class="task-header">
+                <h1 class="task-title">Python Programming Live Quiz</h1>
+                <p class="task-subtitle">Real-time quiz with 20 seconds per question</p>
+            </div>
+
+            <!-- Quiz Section -->
+            <div class="quiz-section">
+                <!-- Game Status Display -->
+                <div class="game-status-bar">
+                    <div class="status-info">
+                        <span class="status-label">Game Status:</span>
+                        <span class="status-value" id="game-status">Loading...</span>
+                    </div>
+                    <div class="question-info">
+                        <span class="question-counter" id="question-counter">Question 1 of 20</span>
+                    </div>
+                    <div class="timer-info">
+                        <span class="timer-label">Time Left:</span>
+                        <span class="timer-value" id="timer-value">20</span>
+                    </div>
+                </div>
+
+                <!-- Waiting Screen -->
+                <div id="waiting-screen" class="waiting-screen">
+                    <div class="waiting-content">
+                        <div class="waiting-icon-container">
+                            <div class="loading-spinner"></div>
+                        </div>
+                        <h3 class="waiting-title">Waiting for Game to Start</h3>
+                        <p class="waiting-text">The instructor will start the game soon. Please wait...</p>
+                        <div class="waiting-dots">
+                            <span class="dot"></span>
+                            <span class="dot"></span>
+                            <span class="dot"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Question Display -->
+                <div id="question-display" class="question-display" style="display: none;">
+                    <div class="questions-container">
+                        <div class="question-item">
+                            <h3 class="question-title" id="current-question-title">Question 1: Code Analysis Challenge</h3>
+                            <p class="question-text" id="question-text">Loading question...</p>
+                            
+                            <div class="options" id="answer-options">
+                                <label class="option-gold" id="option-a">
+                                    <input type="radio" name="current-answer" value="a">
+                                    <span class="option-text">a) Option A</span>
+                                </label>
+                                <label class="option-purple" id="option-b">
+                                    <input type="radio" name="current-answer" value="b">
+                                    <span class="option-text">b) Option B</span>
+                                </label>
+                                <label class="option-orange" id="option-c">
+                                    <input type="radio" name="current-answer" value="c">
+                                    <span class="option-text">c) Option C</span>
+                                </label>
+                                <label class="option-teal" id="option-d">
+                                    <input type="radio" name="current-answer" value="d">
+                                    <span class="option-text">d) Option D</span>
+                                </label>
+                            </div>
+
+                            <div class="submit-section">
+                                <button id="submit-answer-btn" class="submit-btn" disabled>
+                                    <span>Submit Answer</span>
+                                    <div class="btn-icon">
+                                        <i class="fas fa-check"></i>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Result Display -->
+                <div id="answer-result" class="answer-result" style="display: none;">
+                    <div class="result-content">
+                        <div class="result-icon" id="result-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <h3 class="result-title" id="result-title">Correct!</h3>
+                        <p class="result-text" id="result-text">Great job! You earned 25 points.</p>
+                        <div class="result-score">
+                            <span class="score-label">Your Score:</span>
+                            <span class="score-value" id="current-score">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Game Complete Screen -->
+                <div id="game-complete" class="game-complete-screen" style="display: none;">
+                    <div class="complete-content">
+                        <i class="fas fa-trophy complete-icon"></i>
+                        <h2 class="complete-title">Recap Complete!</h2>
+                        <p class="complete-text">Congratulations on completing the Python recap!</p>
+                        <div class="final-score">
+                            <span class="final-score-label">Final Score:</span>
+                            <span class="final-score-value" id="final-score">0</span>
+                        </div>
+                        <button id="return-lobby-btn" class="next-btn">
+                            <span>Continue to Next Task</span>
+                            <div class="btn-icon">
+                                <i class="fas fa-arrow-right"></i>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+                
+                <script>
+                    const userRole = "<%= user.role %>";
+                    const userName = "<%= user.name %>";
+                </script>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/task1-realtime.js"></script>
+</body>
+</html>

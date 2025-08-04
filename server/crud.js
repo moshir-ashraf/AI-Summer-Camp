@@ -13,22 +13,24 @@ const fieldMappings = {
       updated_at: 'updatedAt'
     }
   },
-  game_state: {
+  game: {
     camelToSnake: {
       isPaused: 'is_paused',
-      currentTask: 'current_task',
-      instructorId: 'instructor_id',
-      gameName: 'game_name'
+      currentQuestion: 'current_question',
+      createdAt: 'created_at',
+      updatedAt: 'updated_at',
+      numStudents: 'num_students',
+      attemptedQuestion: 'attempted_question'
     },
     snakeToCamel: {
       is_paused: 'isPaused',
-      current_task: 'currentTask',
-      instructor_id: 'instructorId',
-      game_name: 'gameName',
+      current_question: 'currentQuestion',
       created_at: 'createdAt',
-      updated_at: 'updatedAt'
+      updated_at: 'updatedAt',
+      num_students: 'numStudents',
+      attempted_question: 'attemptedQuestion'
     }
-  }
+  },
 };
 
 // Helper function to convert camelCase object to snake_case for database
@@ -68,21 +70,23 @@ const convertFromDbFormat = (record, tableName) => {
 const CRUDInterface = {
   create: async function (tableName, data, compareKey) {
     try {
-      // Check if record already exists
-      const dbCompareKey = fieldMappings[tableName]?.camelToSnake[compareKey] || compareKey;
-      
-      const { data: existingRecord, error: selectError } = await supabase
-        .from(tableName)
-        .select('*')
-        .eq(dbCompareKey, data[compareKey])
-        .single();
+      // Only check if record already exists if compareKey is provided
+      if (compareKey && data[compareKey] !== undefined) {
+        const dbCompareKey = fieldMappings[tableName]?.camelToSnake[compareKey] || compareKey;
+        
+        const { data: existingRecord, error: selectError } = await supabase
+          .from(tableName)
+          .select('*')
+          .eq(dbCompareKey, data[compareKey])
+          .single();
 
-      if (selectError && selectError.code !== 'PGRST116') { // PGRST116 = no rows found
-        throw selectError;
-      }
+        if (selectError && selectError.code !== 'PGRST116') { // PGRST116 = no rows found
+          throw selectError;
+        }
 
-      if (existingRecord) {
-        return new Result(0, convertFromDbFormat(existingRecord, tableName), `Record with ${compareKey}: ${data[compareKey]} already exists.`);
+        if (existingRecord) {
+          return new Result(0, convertFromDbFormat(existingRecord, tableName), `Record with ${compareKey}: ${data[compareKey]} already exists.`);
+        }
       }
 
       // Convert camelCase to snake_case for database
@@ -99,7 +103,8 @@ const CRUDInterface = {
       // Convert snake_case back to camelCase
       const formattedRecord = convertFromDbFormat(record, tableName);
 
-      return new Result(1, formattedRecord, `Created new record with ${compareKey}: ${data[compareKey]}.`);
+      const keyDescription = compareKey && data[compareKey] ? `${compareKey}: ${data[compareKey]}` : 'new record';
+      return new Result(1, formattedRecord, `Created ${keyDescription}.`);
     } catch (error) {
       return new Result(-1, null, `Error adding data: ${error.message}.`);
     }
@@ -123,6 +128,32 @@ const CRUDInterface = {
       }
     } catch (error) {
       return new Result(-1, null, `Error removing data: ${error.message}.`);
+    }
+  },
+  remove: async function (tableName, primaryKey, compareKey = "id") {
+    try {
+      const dbCompareKey = fieldMappings[tableName]?.camelToSnake[compareKey] || 
+                          (compareKey === '_id' ? 'id' : compareKey);
+      
+      const { data, error } = await supabase
+        .from(tableName)
+        .delete()
+        .eq(dbCompareKey, primaryKey)
+        .select()
+        .single();
+
+      if (error && error.code !== 'PGRST116') { // PGRST116 = no rows found
+        throw error;
+      }
+
+      if (data) {
+        const formattedRecord = convertFromDbFormat(data, tableName);
+        return new Result(1, formattedRecord, `Deleted record with ${compareKey}: ${primaryKey}.`);
+      } else {
+        return new Result(0, null, `Record with ${compareKey}: ${primaryKey} not found.`);
+      }
+    } catch (error) {
+      return new Result(-1, null, `Error removing record: ${error.message}.`);
     }
   },
   get: async function (tableName, primaryKey, compareKey) {
@@ -257,6 +288,23 @@ const CRUDInterface = {
       }
     } catch (error) {
       return new Result(-1, null, `Error getting record: ${error.message}.`);
+    }
+  },
+
+  // Helper method to remove all records from a table
+  removeAllRecords: async function (tableName) {
+    try {
+      const { data, error } = await supabase
+        .from(tableName)
+        .delete()
+        .neq('id', '') // Delete all records (using a condition that's always true)
+        .select();
+
+      if (error) throw error;
+
+      return new Result(1, { deletedCount: data?.length || 0 }, `Deleted ${data?.length || 0} records from ${tableName}.`);
+    } catch (error) {
+      return new Result(-1, null, `Error removing all records: ${error.message}`);
     }
   }
 };

@@ -331,3 +331,75 @@ html {
 html::-webkit-scrollbar {
     display: none;  /* Chrome, Safari, Edge */
 }
+
+/* Game Status Display */
+.game-status-display {
+    margin-bottom: 2rem;
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    border: 2px solid;
+}
+
+.status-indicator.waiting {
+    background: rgba(255, 193, 7, 0.1);
+    color: #ffd700;
+    border-color: rgba(255, 215, 0, 0.4);
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+}
+
+.status-indicator.active {
+    background: rgba(76, 175, 80, 0.1);
+    color: #4caf50;
+    border-color: rgba(76, 175, 80, 0.4);
+    box-shadow: 0 0 20px rgba(76, 175, 80, 0.2);
+    animation: pulse 2s infinite;
+}
+
+.status-indicator.paused {
+    background: rgba(255, 107, 53, 0.1);
+    color: #ff6b35;
+    border-color: rgba(255, 107, 53, 0.4);
+    box-shadow: 0 0 20px rgba(255, 107, 53, 0.2);
+}
+
+.status-indicator i {
+    font-size: 1.2rem;
+}
+
+/* Updated Start Button Styles */
+.start-btn.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: 0 5px 15px rgba(0, 229, 255, 0.1) !important;
+}
+
+.start-btn.disabled:hover {
+    transform: none !important;
+    box-shadow: 0 5px 15px rgba(0, 229, 255, 0.1) !important;
+}
+
+/* Pulse animation for active status */
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 20px rgba(76, 175, 80, 0.2);
+    }
+    50% {
+        box-shadow: 0 0 30px rgba(76, 175, 80, 0.4);
+    }
+    100% {
+        box-shadow: 0 0 20px rgba(76, 175, 80, 0.2);
+    }
+}

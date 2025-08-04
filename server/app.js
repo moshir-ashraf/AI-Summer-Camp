@@ -1,9 +1,9 @@
+const path = require("path");
+require('dotenv').config({path: path.join(__dirname, '../.env')});
+
 const express = require("express");
 const session = require("express-session");
-const path = require("path");
 const supabase = require("./supabase");
-
-require('dotenv').config({path: path.join(__dirname, '../.env')});
 
 const app = express()
 const router = require('./route')
@@ -28,12 +28,12 @@ async function testConnection() {
       .select('count', { count: 'exact', head: true });
     
     if (error) {
-      console.log("❌ Database connection error:", error.message);
+      console.log("Database connection error:", error.message);
     } else {
-      console.log("✅ Connected to Supabase successfully");
+      console.log("Connected to Supabase successfully");
     }
   } catch (error) {
-    console.log("❌ Supabase connection failed:", error.message);
+    console.log("Supabase connection failed:", error.message);
   }
 }
 

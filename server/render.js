@@ -1,4 +1,5 @@
 const User = require("./user");
+const Game = require("./game");
 
 // Route handler functions
 const renderIntro = (req, res) => {
@@ -79,33 +80,6 @@ const renderAdmin = async (req, res) => {
   }
 }
 
-const renderTask1 = (req, res) => {
-  if (!req.session.user) {
-    return res.redirect('/');
-  }
-  
-  const user = req.session.user;
-  
-  // Instructors have access to all tasks
-  if (user.role === 'INSTRUCTOR') {
-    return res.render('task1', { user: req.session.user });
-  }
-  
-  const lastCompleted = user.lastTaskCompleted || 0;
-  
-  // Only allow task 1 if no tasks completed or task 1 already completed (allow replay of current task)
-  if (lastCompleted >= 1) {
-    // Already completed, allow access
-    res.render('task1', { user: req.session.user });
-  } else if (lastCompleted === 0) {
-    // First task, allow access
-    res.render('task1', { user: req.session.user });
-  } else {
-    // Shouldn't happen, but redirect to lobby
-    return res.redirect('/lobby');
-  }
-}
-
 const renderFinal = async (req, res) => {
   if (!req.session.user) {
     return res.redirect('/');
@@ -145,6 +119,30 @@ const renderFinal = async (req, res) => {
   }
 }
 
+const renderTask1Realtime = async (req, res) => {
+  if (!req.session.user) {
+    return res.redirect('/');
+  }
+  
+  try {
+    // Refresh user data from database to get latest score
+    const userResult = await User.get(req.session.user._id, '_id');
+    
+    let user = req.session.user;
+    if (userResult.success.status) {
+      req.session.user.score = userResult.data.score;
+      user = req.session.user;
+    }
+    
+    res.render('task1-realtime', { user: user });
+  } catch (error) {
+    console.error('Error refreshing user data:', error);
+    // Fallback to session data
+    const user = req.session.user;
+    res.render('task1-realtime', { user: user });
+  }
+}
+
 const handleDefaultRoute = (req, res) => {
   if (req.session.user) {
     return res.redirect('/lobby');
@@ -156,7 +154,7 @@ module.exports = {
   renderIntro,
   renderLobby,
   renderAdmin,
-  renderTask1,
+  renderTask1Realtime,
   renderFinal,
   handleDefaultRoute
 };
