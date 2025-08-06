@@ -6,20 +6,48 @@
   "scripts": {
     "start": "electron .",
     "build": "electron-builder",
+    "build:win": "electron-builder --win",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Moshir Ashraf",
   "license": "ISC",
   "dependencies": {
+    "@supabase/supabase-js": "^2.53.0",
     "dotenv": "^17.2.1",
     "ejs": "^3.1.10",
-    "electron": "^37.2.5",
     "express": "^5.1.0",
-    "express-session": "^1.18.2",
-    "mongodb": "^6.18.0",
-    "mongoose": "^8.17.0"
+    "express-session": "^1.18.2"
   },
   "devDependencies": {
+    "electron": "^37.2.5",
     "electron-builder": "^26.0.12"
+  },
+  "build": {
+    "appId": "com.moshirashraf.ai-summer-camp-intro",
+    "productName": "AI Summer Camp",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "server/**/*",
+      "node_modules/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64"]
+        }
+      ],
+      "icon": "icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    }
   }
 }

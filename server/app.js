@@ -1,9 +1,9 @@
-const express = require("express");
-const mongoose = require("mongoose");
-const session = require("express-session");
 const path = require("path");
-
 require('dotenv').config({path: path.join(__dirname, '../.env')});
+
+const express = require("express");
+const session = require("express-session");
+const supabase = require("./supabase");
 
 const app = express()
 const router = require('./route')
@@ -20,18 +20,23 @@ app.set('views', path.join(__dirname, 'views'))
 app.use(express.static(path.join(__dirname, 'public')))
 app.use('/', router)
 
+// Simple connection test
+async function testConnection() {
+  try {
+    const { error } = await supabase
+      .from('users')
+      .select('count', { count: 'exact', head: true });
+    
+    if (error) {
+      console.log("Database connection error:", error.message);
+    } else {
+      console.log("Connected to Supabase successfully");
+    }
+  } catch (error) {
+    console.log("Supabase connection failed:", error.message);
+  }
+}
 
-mongoose
-  .connect(process.env.MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-})
-  .then(() => {
-    console.log("Connected to MongoDB successfully");
-  })
-  .catch((error) => {
-    console.error("MongoDB connection error:", error);
-    process.exit(1);
-  });
+testConnection();
 
 module.exports = app

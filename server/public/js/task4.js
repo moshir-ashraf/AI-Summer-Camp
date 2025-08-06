@@ -1,6 +1,5 @@
 // Task 4 JavaScript - Regression Challenge
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('Task 4 - Regression Challenge loaded');
     
     // Test cases with expected answers
     const testCases = [
@@ -261,13 +260,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 })
             });
             
-            if (response.ok) {
-                console.log('Score updated successfully');
-            } else {
-                console.error('Failed to update score');
-            }
         } catch (error) {
-            console.error('Error updating score:', error);
         }
     }
     
