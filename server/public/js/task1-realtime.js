@@ -305,7 +305,6 @@ function resetGameState() {
         radio.checked = false;
     });
     
-    console.log('Game state reset completed');
 }
 
 async function checkGameStatus() {
@@ -604,5 +603,4 @@ function showGameComplete() {
     if (finalScoreEl) finalScoreEl.textContent = currentScore;
     
     // Stop checking game status since we're completed
-    console.log('Game completed successfully!');
 }

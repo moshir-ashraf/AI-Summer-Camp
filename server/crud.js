@@ -31,6 +31,14 @@ const fieldMappings = {
       attempted_question: 'attemptedQuestion'
     }
   },
+  task: {
+    camelToSnake: {
+      createdAt: 'created_at'
+    },
+    snakeToCamel: {
+      created_at: 'createdAt'
+    }
+  }
 };
 
 // Helper function to convert camelCase object to snake_case for database
@@ -297,7 +305,7 @@ const CRUDInterface = {
       const { data, error } = await supabase
         .from(tableName)
         .delete()
-        .neq('id', '') // Delete all records (using a condition that's always true)
+        .gte('id', '00000000-0000-0000-0000-000000000000') // Delete all records (using a condition that's always true for UUIDs)
         .select();
 
       if (error) throw error;

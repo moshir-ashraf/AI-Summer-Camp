@@ -24,7 +24,7 @@
   },
   "build": {
     "appId": "com.moshirashraf.ai-summer-camp-intro",
-    "productName": "AI Summer Camp - Recap",
+    "productName": "AI Summer Camp",
     "directories": {
       "output": "dist"
     },

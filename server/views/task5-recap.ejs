@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Summer Camp - Task 5</title>
+    <link rel="stylesheet" href="/css/task5.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="task-card">
+            <!-- Header Section -->
+            <div class="header-section">
+                <a href="/lobby" class="back-btn">
+                    <i class="fas fa-arrow-left"></i>
+                    <%= user.role === 'INSTRUCTOR' ? 'Back to Leaderboard' : 'Back to Lobby' %>
+                </a>
+                <a href="/logout" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </a>
+            </div>
+
+            <div class="task-header">
+                <h1 class="task-title">Step 1: Natural Language Processing Challenge</h1>
+                <p class="task-subtitle">Learning how AI understands human language and sentiment</p>
+            </div>
+
+            <!-- Introduction Section -->
+            <div class="intro-section">
+                <h2 class="section-title">From Numbers to Words: The Language Revolution</h2>
+                <div class="intro-content">
+                    <div class="intro-text">
+                        <p class="description-text">
+                            As AI advanced beyond recognizing patterns in numbers and categories, scientists achieved a remarkable 
+                            breakthrough: teaching computers to understand <strong>human language</strong>. This meant AI could 
+                            now draw patterns not just between classes or numerical values, but within the complex world of 
+                            <span class="highlight">speech and text</span>.
+                        </p>
+                        <p class="description-text">
+                            This field, called <strong>Natural Language Processing (NLP)</strong>, allows AI to analyze the meaning, 
+                            emotion, and intent behind words. One of the most practical applications is <span class="highlight">sentiment analysis</span>—
+                            determining whether text expresses positive, negative, or neutral feelings. This powers everything from 
+                            social media monitoring to customer feedback analysis.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Training Data Section -->
+            <div class="training-section">
+                <h2 class="section-title">Step 1: Learn to Identify Language Features</h2>
+                <p class="section-subtitle">Analyze these customer reviews to understand how AI detects sentiment through word patterns</p>
+                <div class="training-grid">
+                    <div class="training-item positive-review">
+                        <h3 class="item-title">Positive Sentiment</h3>
+                        <div class="review-icon">
+                            <i class="fas fa-smile"></i>
+                            <span class="sentiment-label">Happy Customer</span>
+                        </div>
+                        <div class="features-list">
+                            <h4 class="features-title">Customer Review:</h4>
+                            <p class="review-text">"I absolutely <strong>loved</strong> this product! The quality is <strong>fantastic</strong> and it works <strong>amazingly</strong> well."</p>
+                            <h4 class="features-title">Key Language Features:</h4>
+                            <ul class="features">
+                                <li><strong>Positive words:</strong> loved, fantastic, amazingly</li>
+                                <li><strong>Enthusiastic tone:</strong> "absolutely loved"</li>
+                                <li><strong>Praise language:</strong> "works well"</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="training-item negative-review">
+                        <h3 class="item-title">Negative Sentiment</h3>
+                        <div class="review-icon">
+                            <i class="fas fa-frown"></i>
+                            <span class="sentiment-label">Unhappy Customer</span>
+                        </div>
+                        <div class="features-list">
+                            <h4 class="features-title">Customer Review:</h4>
+                            <p class="review-text">"I was so <strong>disappointed</strong> with this. It <strong>broke</strong> after only a week, and the customer service was <strong>terrible</strong>."</p>
+                            <h4 class="features-title">Key Language Features:</h4>
+                            <ul class="features">
+                                <li><strong>Negative words:</strong> disappointed, broke, terrible</li>
+                                <li><strong>Problem focus:</strong> mentions failures</li>
+                                <li><strong>Critical tone:</strong> dissatisfaction expressed</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Testing Section -->
+            <div class="testing-section">
+                <h2 class="section-title">Step 2: Classify These New Reviews</h2>
+                <p class="section-subtitle">Use your understanding of language features to determine sentiment</p>
+                
+                <div class="testing-grid">
+                    <div class="test-item">
+                        <div class="review-icon mystery">
+                            <i class="fas fa-question"></i>
+                            <span class="sentiment-label">Unknown Sentiment</span>
+                        </div>
+                        <label for="answer1" class="test-label">Review A</label>
+                        <div class="features-list">
+                            <p class="review-text">"The product arrived quickly and was easy to use, but the battery life is surprisingly short."</p>
+                            <p class="observed-features"><strong>Your Analysis:</strong></p>
+                        </div>
+                        <select id="answer1" class="answer-select">
+                            <option value="">Choose sentiment...</option>
+                            <option value="Positive">Positive</option>
+                            <option value="Negative">Negative</option>
+                            <option value="Mixed">Mixed</option>
+                        </select>
+                    </div>
+                    <div class="test-item">
+                        <div class="review-icon mystery">
+                            <i class="fas fa-question"></i>
+                            <span class="sentiment-label">Unknown Sentiment</span>
+                        </div>
+                        <label for="answer2" class="test-label">Review B</label>
+                        <div class="features-list">
+                            <p class="review-text">"Outstanding quality! This exceeded all my expectations and I highly recommend it to everyone."</p>
+                            <p class="observed-features"><strong>Your Analysis:</strong></p>
+                        </div>
+                        <select id="answer2" class="answer-select">
+                            <option value="">Choose sentiment...</option>
+                            <option value="Positive">Positive</option>
+                            <option value="Negative">Negative</option>
+                            <option value="Mixed">Mixed</option>
+                        </select>
+                    </div>
+                    <div class="test-item">
+                        <div class="review-icon mystery">
+                            <i class="fas fa-question"></i>
+                            <span class="sentiment-label">Unknown Sentiment</span>
+                        </div>
+                        <label for="answer3" class="test-label">Review C</label>
+                        <div class="features-list">
+                            <p class="review-text">"Worst purchase ever. Complete waste of money and doesn't work at all. Avoid this product!"</p>
+                            <p class="observed-features"><strong>Your Analysis:</strong></p>
+                        </div>
+                        <select id="answer3" class="answer-select">
+                            <option value="">Choose sentiment...</option>
+                            <option value="Positive">Positive</option>
+                            <option value="Negative">Negative</option>
+                            <option value="Mixed">Mixed</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="submit-section">
+                    <button id="checkButton" class="submit-btn">
+                        <span><%= user.role === 'INSTRUCTOR' ? 'Show Solution' : 'Check My Answers' %></span>
+                        <div class="btn-icon">
+                            <i class="fas fa-<%= user.role === 'INSTRUCTOR' ? 'eye' : 'check' %>"></i>
+                        </div>
+                    </button>
+                </div>
+                <script> const userRole = "<%= user.role %>"; </script>
+                
+            </div>
+
+            <!-- Feedback Section -->
+            <div id="feedback" class="feedback-section hidden">
+                <h3 class="feedback-title">Your Results</h3>
+                <div id="score-display" class="score-display"></div>
+                <ul id="feedback-list" class="feedback-list"></ul>
+                
+                <!-- Educational Explanation -->
+                <div id="explanation" class="explanation-section">
+                    <h4 class="explanation-title">What Just Happened?</h4>
+                    <p class="explanation-text">
+                        You just performed <strong>sentiment analysis</strong> using Natural Language Processing! Instead of 
+                        analyzing numbers or simple categories, you examined the emotional tone and meaning within 
+                        <span class="highlight">human language</span>. This is one of AI's most sophisticated capabilities.
+                    </p>
+                    <p class="explanation-text">
+                        <strong>Natural Language Processing (NLP)</strong> allows AI to understand text by identifying key features 
+                        like positive/negative words, emotional intensity, and contextual meaning. The AI doesn't just look for 
+                        individual words—it analyzes patterns, combinations, and linguistic structures to determine overall sentiment.
+                    </p>
+                    <p class="explanation-text">
+                        In real-world applications, NLP powers chatbots, virtual assistants, language translation, content moderation, 
+                        and social media monitoring. Companies use sentiment analysis to understand customer feedback, track brand 
+                        reputation, and improve their products based on what people are actually saying.
+                    </p>
+                    <p class="explanation-text">
+                        What makes NLP remarkable is that it bridges the gap between human communication and machine understanding. 
+                        By teaching AI to process language, we've enabled computers to interact with us in our most natural form 
+                        of expression—words, sentences, and conversations.
+                    </p>
+                </div>
+                
+                <div class="next-section">
+                    <button id="nextButton" class="next-btn">
+                        <span>Complete AI Journey</span>
+                        <div class="btn-icon">
+                            <i class="fas fa-trophy"></i>
+                        </div>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="/js/task5.js"></script>
+</body>
+</html>

@@ -10,6 +10,11 @@ router.get('/admin', render.renderAdmin)
 
 // Task routes
 router.get('/task1-realtime', render.renderTask1Realtime)
+router.get('/task1', render.renderTask1)
+router.get('/task2', render.renderTask2)
+router.get('/task3', render.renderTask3)
+router.get('/task4', render.renderTask4)
+router.get('/task5', render.renderTask5)
 
 // Final route
 router.get('/final', render.renderFinal)
@@ -34,6 +39,11 @@ router.post('/api/game/end-question', controller.endQuestion)
 router.post('/api/game/auto-end-question', controller.endQuestion)
 router.get('/api/game/status', controller.getGameStatus)
 router.post('/api/game/submit-answer', controller.submitAnswer)
+
+// Task API routes
+router.get('/api/task/current', controller.getCurrentTask)
+router.post('/api/task/set-mode', controller.setTaskMode)
+router.post('/api/task/remove-all', controller.removeAllTasks)
 
 // Default route handler
 router.use(render.handleDefaultRoute)

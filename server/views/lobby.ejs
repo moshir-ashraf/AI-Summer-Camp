@@ -31,12 +31,21 @@
             </div>
             
             <div class="ai-description">
-                <h2 class="description-title">How Python Works</h2>
-                <p class="description-text">
-                    Python is a high-level programming language designed for readability and simplicity. 
-                    It uses straightforward syntax to let programmers write clear and concise code. 
-                    Python runs instructions line by line and supports many libraries that make complex tasks easier to implement.
-                </p>
+                <% if (currentMode === 'Model Mimic') { %>
+                    <h2 class="description-title">How Deep Learning Works</h2>
+                    <p class="description-text">
+                        Deep learning is about feeding input data into neural network models that train and learn patterns from the data. 
+                        These models process information through multiple layers, extracting features and making connections to produce 
+                        intelligent observational insights and concluding outputs that can solve complex problems.
+                    </p>
+                <% } else { %>
+                    <h2 class="description-title">How Python Works</h2>
+                    <p class="description-text">
+                        Python is a high-level programming language designed for readability and simplicity. 
+                        It uses straightforward syntax to let programmers write clear and concise code. 
+                        Python runs instructions line by line and supports many libraries that make complex tasks easier to implement.
+                    </p>
+                <% } %>
             </div>
             
             <div class="action-section">
@@ -52,6 +61,8 @@
 
     <script>
         window.nextTask = <%= nextTask %>;
+        window.currentMode = "<%= currentMode %>";
+        window.userLastTaskCompleted = <%= user.lastTaskCompleted || 0 %>;
     </script>
     <script src="/js/lobby.js"></script>
 </body>

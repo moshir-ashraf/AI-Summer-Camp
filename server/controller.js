@@ -1,5 +1,6 @@
 const User = require("./user");
 const Game = require("./game");
+const Task = require("./task");
 const Result = require("./result");
 
 const jsonToObject = (json, role = "STUDENT") => new User(json, role);
@@ -388,23 +389,34 @@ const resumeGame = async (req, res) => {
 const nextQuestion = async (req, res) => {
   try {
     const game = await Game.getCurrentGame();
+    const currentTask = await Task.getCurrent();
+    
     if (game.success.status) {
-      // Check if we're already at the last question
-      if (game.data.currentQuestion >= 20) {
+      // Determine the maximum limit based on current mode
+      let maxLimit = 20; // Default for Python Recap
+      let itemType = "questions";
+      
+      if (currentTask.success.status && currentTask.data.mode === 'Model Mimic') {
+        maxLimit = 5; // Model Mimic has 5 tasks
+        itemType = "tasks";
+      }
+      
+      // Check if we're already at the last question/task
+      if (game.data.currentQuestion >= maxLimit) {
         return res.json({
           success: false,
-          message: 'Quiz is complete! No more questions available.',
+          message: `All ${itemType} are complete! No more ${itemType} available.`,
           data: game.data,
           isComplete: true
         });
       }
       
-      const result = await Game.nextQuestion(game.data.id);
+      const result = await Game.nextQuestion(game.data.id, maxLimit);
       return res.json({
         success: result.success.status,
         message: result.message,
         data: result.data,
-        isComplete: result.data && result.data.currentQuestion >= 20
+        isComplete: result.data && result.data.currentQuestion >= maxLimit
       });
     } else {
       return res.status(404).json({
@@ -415,7 +427,7 @@ const nextQuestion = async (req, res) => {
   } catch (error) {
     return res.status(500).json({
       success: false,
-      message: `Error advancing question: ${error.message}`
+      message: `Error advancing question/task: ${error.message}`
     });
   }
 };
@@ -459,11 +471,43 @@ const endQuestion = async (req, res) => {
 const getGameStatus = async (req, res) => {
   try {
     const game = await Game.getCurrentGame();
+    const currentTask = await Task.getCurrent();
+    
     if (game.success.status) {
+      // Add current mode to game data
+      const gameData = { ...game.data };
+      if (currentTask.success.status) {
+        gameData.currentMode = currentTask.data.mode;
+        
+        // Handle different logic based on task mode
+        if (currentTask.data.mode === 'Model Mimic') {
+          // For Model Mimic mode, we track task progression instead of questions
+          // currentQuestion represents the current task number (1-5)
+          gameData.currentTask = gameData.currentQuestion || 1;
+          gameData.maxTasks = 5; // Model Mimic has 5 tasks
+          
+          // For Model Mimic, students can start immediately when game is not paused
+          if (!gameData.isPaused) {
+            gameData.canStart = true;
+          }
+        } else if (currentTask.data.mode === 'Python Recap') {
+          // For Python Recap mode, keep existing question-based logic
+          gameData.currentQuestion = gameData.currentQuestion || 1;
+          gameData.maxQuestions = 20;
+          
+          // For Python Recap, students join the real-time quiz
+          if (!gameData.isPaused) {
+            gameData.canStart = true;
+          }
+        }
+      } else {
+        gameData.currentMode = null;
+      }
+      
       return res.json({
         success: true,
         message: 'Game status retrieved',
-        data: game.data
+        data: gameData
       });
     } else {
       // Create a new game if none exists
@@ -471,17 +515,42 @@ const getGameStatus = async (req, res) => {
       const numStudents = studentsResult.success.status ? 
         studentsResult.data.filter(user => user.role === 'STUDENT').length : 0;
 
-      const createResult = await Game.createGame({
+      // Initialize game based on current task mode
+      let gameConfig = {
         isPaused: true,
-        currentQuestion: 1,
         numStudents: numStudents,
         attemptedQuestion: 0
-      });
+      };
+      
+      if (currentTask.success.status && currentTask.data.mode === 'Model Mimic') {
+        // For Model Mimic, start with task 1
+        gameConfig.currentQuestion = 1; // Represents current task number
+      } else {
+        // For Python Recap or default, start with question 1
+        gameConfig.currentQuestion = 1;
+      }
+
+      const createResult = await Game.createGame(gameConfig);
+
+      // Add current mode to new game data
+      const gameData = { ...createResult.data };
+      if (currentTask.success.status) {
+        gameData.currentMode = currentTask.data.mode;
+        
+        if (currentTask.data.mode === 'Model Mimic') {
+          gameData.currentTask = gameData.currentQuestion || 1;
+          gameData.maxTasks = 5;
+        } else if (currentTask.data.mode === 'Python Recap') {
+          gameData.maxQuestions = 20;
+        }
+      } else {
+        gameData.currentMode = null;
+      }
 
       return res.json({
         success: createResult.success.status,
         message: 'New game created',
-        data: createResult.data
+        data: gameData
       });
     }
   } catch (error) {
@@ -606,6 +675,126 @@ const checkAnswer = (questionNumber, answer) => {
   };
 };
 
+// Task Management Functions
+
+const getCurrentTask = async (req, res) => {
+  try {
+    const result = await Task.getCurrent();
+    
+    if (result.success.status) {
+      res.json({
+        success: true,
+        data: result.data
+      });
+    } else {
+      res.json({
+        success: false,
+        message: result.message,
+        data: null
+      });
+    }
+  } catch (error) {
+    console.error('Error getting current task:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to get current task'
+    });
+  }
+};
+
+const setTaskMode = async (req, res) => {
+  try {
+    // Check if user is instructor
+    if (!req.session.user || req.session.user.role !== 'INSTRUCTOR') {
+      return res.status(403).json({
+        success: false,
+        message: 'Only instructors can set task mode'
+      });
+    }
+
+    const { mode } = req.body;
+    
+    if (!mode) {
+      return res.status(400).json({
+        success: false,
+        message: 'Mode is required'
+      });
+    }
+
+    const result = await Task.setMode(mode);
+    
+    if (result.success.status) {
+      // Initialize or reset game state when task mode is set
+      try {
+        // Get number of students
+        const studentsResult = await User.getAll();
+        const numStudents = studentsResult.success.status ? 
+          studentsResult.data.filter(user => user.role === 'STUDENT').length : 0;
+
+        // Create a new game state for the new task mode
+        await Game.createGame({
+          isPaused: true, // Will be un-paused when instructor starts the activity
+          currentQuestion: 1,
+          numStudents: numStudents,
+          attemptedQuestion: 0
+        });
+        
+      } catch (gameError) {
+        // Don't fail the entire request if game creation fails
+      }
+      
+      res.json({
+        success: true,
+        message: `Task mode set to ${mode}`,
+        data: result.data
+      });
+    } else {
+      res.status(400).json({
+        success: false,
+        message: result.message
+      });
+    }
+  } catch (error) {
+    console.error('Error setting task mode:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to set task mode'
+    });
+  }
+};
+
+const removeAllTasks = async (req, res) => {
+  try {
+    // Check if user is instructor
+    if (!req.session.user || req.session.user.role !== 'INSTRUCTOR') {
+      return res.status(403).json({
+        success: false,
+        message: 'Only instructors can remove tasks'
+      });
+    }
+
+    const result = await Task.removeAll();
+    
+    if (result.success.status) {
+      res.json({
+        success: true,
+        message: 'All tasks removed successfully'
+      });
+    } else {
+      res.status(500).json({
+        success: false,
+        message: result.message
+      });
+    }
+  } catch (error) {
+    console.error('Error removing all tasks:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to remove tasks'
+    });
+  }
+};
+
 module.exports = {
   _jsonToObject: jsonToObject,
   addUser,
@@ -626,6 +815,10 @@ module.exports = {
   nextQuestion,
   endQuestion,
   getGameStatus,
-  submitAnswer
+  submitAnswer,
+  // Task functions
+  getCurrentTask,
+  setTaskMode,
+  removeAllTasks
 };
 

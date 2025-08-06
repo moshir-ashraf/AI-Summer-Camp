@@ -70,15 +70,7 @@ class Game {
 
   static async deleteAllGames() {
     try {
-      // Get all games
-      const allGames = await Game.getAll();
-      if (allGames.success.status && allGames.data.length > 0) {
-        // Delete each game
-        for (const game of allGames.data) {
-          await Game.crudInterface.delete(Game.tableName, game.id, 'id');
-        }
-      }
-      return new Result(1, null, "All existing games deleted.");
+      return await Game.crudInterface.removeAllRecords(Game.tableName);
     } catch (error) {
       return new Result(-1, null, `Error deleting existing games: ${error.message}`);
     }
@@ -105,7 +97,7 @@ class Game {
     return await Game.updateGameState(gameId, { isPaused: false });
   }
 
-  static async nextQuestion(gameId) {
+  static async nextQuestion(gameId, maxLimit = 20) {
     try {
       const gameResult = await Game.get(gameId);
       if (!gameResult.success.status) {
@@ -115,19 +107,20 @@ class Game {
       const game = gameResult.data;
       const currentQuestion = game.currentQuestion || 1;
       
-      // Check if we're already at the last question
-      if (currentQuestion >= 20) {
-        return new Result(0, game, "Quiz is complete! No more questions available.");
+      // Check if we're already at the last question/task
+      if (currentQuestion >= maxLimit) {
+        const itemType = maxLimit === 5 ? "tasks" : "questions";
+        return new Result(0, game, `All ${itemType} are complete! No more ${itemType} available.`);
       }
       
       const nextQuestionNumber = currentQuestion + 1;
       
       return await Game.updateGameState(gameId, { 
         currentQuestion: nextQuestionNumber,
-        attemptedQuestion: 0 // Reset attempted count for new question
+        attemptedQuestion: 0 // Reset attempted count for new question/task
       });
     } catch (error) {
-      return new Result(-1, null, `Error advancing to next question: ${error.message}`);
+      return new Result(-1, null, `Error advancing to next question/task: ${error.message}`);
     }
   }
 

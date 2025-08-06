@@ -24,6 +24,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 targetPanel.classList.add('active');
             }
 
+            // Special handling for task-mode panel
+            if (panelId === 'task-mode-panel') {
+                loadCurrentMode();
+            }
+
             // On mobile, scroll to top of content
             if (window.innerWidth <= 768) {
                 document.querySelector('.main-content').scrollTop = 0;
@@ -77,7 +82,6 @@ async function initializeGame() {
         if (createResponse.ok) {
             const createResult = await createResponse.json();
             if (createResult.success) {
-                console.log('Game initialized successfully');
                 updateGameStatus();
             }
         }
@@ -247,7 +251,6 @@ async function refreshLeaderboardData() {
             if (result.success && result.success.status) {
                 const students = result.data.filter(user => user.role === 'STUDENT');
                 updateLeaderboardDisplay(students);
-                console.log('Student data refreshed at:', new Date().toLocaleTimeString());
             }
         }
     } catch (error) {
@@ -418,8 +421,11 @@ function initializeGameControls() {
     // Reset Game button
     document.getElementById('reset-game-btn')?.addEventListener('click', resetGame);
     
-    // Next Question button
+    // Next Question button (Python Recap)
     document.getElementById('next-question-btn')?.addEventListener('click', nextQuestion);
+    
+    // Next Task button (Model Mimic)
+    document.getElementById('next-task-btn')?.addEventListener('click', nextTask);
     
     // End Question Early button
     document.getElementById('end-question-btn')?.addEventListener('click', endQuestionEarly);
@@ -440,7 +446,18 @@ async function startGame() {
             if (result.success) {
                 showNotification('Game started successfully!', 'success');
                 updateGameControls('active');
-                startQuestionTimer();
+                
+                // Only start timer for Python Recap mode
+                // Model Mimic mode is self-paced and admin-controlled
+                const currentModeEl = document.querySelector('.panel-title');
+                const isPythonRecap = currentModeEl && currentModeEl.textContent.includes('Python Programming');
+                
+                if (isPythonRecap) {
+                    startQuestionTimer();
+                    showNotification('Python quiz timer started - students can now join!', 'info');
+                } else {
+                    showNotification('Deep Learning tasks are now available - students can start at their own pace!', 'info');
+                }
             } else {
                 throw new Error(result.message);
             }
@@ -606,6 +623,44 @@ async function nextQuestion() {
     }
 }
 
+async function nextTask() {
+    try {
+        const response = await fetch('/api/game/next-question', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        });
+        
+        if (response.ok) {
+            const result = await response.json();
+            if (result.success) {
+                if (result.isComplete) {
+                    showNotification('All tasks completed! Students have finished all 5 tasks.', 'info');
+                    updateGameControls('complete');
+                } else {
+                    showNotification('Moving to next task...', 'success');
+                    // Update game status to reflect new task
+                    setTimeout(() => {
+                        updateGameStatus();
+                        updateGameControls('active');
+                    }, 500);
+                }
+            } else {
+                if (result.isComplete) {
+                    showNotification('All tasks are already complete!', 'info');
+                    updateGameControls('complete');
+                } else {
+                    throw new Error(result.message);
+                }
+            }
+        } else {
+            throw new Error('Failed to advance task');
+        }
+    } catch (error) {
+        console.error('Error advancing task:', error);
+        showNotification('Failed to advance task. Please try again.', 'error');
+    }
+}
+
 async function endQuestionEarly() {
     const confirmed = await showConfirmDialog('Are you sure you want to end this question early? Scores will be calculated for students who have already answered.');
     
@@ -645,12 +700,18 @@ function updateGameControls(status) {
     const startBtn = document.getElementById('start-game-btn');
     const pauseBtn = document.getElementById('pause-game-btn');
     const resumeBtn = document.getElementById('resume-game-btn');
-    const nextBtn = document.getElementById('next-question-btn');
+    const nextQuestionBtn = document.getElementById('next-question-btn');
+    const nextTaskBtn = document.getElementById('next-task-btn');
     const endBtn = document.getElementById('end-question-btn');
     const statusIndicator = document.getElementById('game-status');
     
+    // Use the global currentMode variable passed from the server
+    const isModelMimic = window.currentMode === 'Model Mimic';
+    const isPythonRecap = window.currentMode === 'Python Recap';
+    
+    
     // Hide all buttons first
-    [startBtn, pauseBtn, resumeBtn, nextBtn, endBtn].forEach(btn => {
+    [startBtn, pauseBtn, resumeBtn, nextQuestionBtn, nextTaskBtn, endBtn].forEach(btn => {
         if (btn) btn.style.display = 'none';
     });
     
@@ -669,8 +730,15 @@ function updateGameControls(status) {
             break;
         case 'active':
             if (pauseBtn) pauseBtn.style.display = 'flex';
-            if (nextBtn) nextBtn.style.display = 'flex';
-            if (endBtn) endBtn.style.display = 'flex';
+            
+            // Show appropriate next button based on mode
+            if (isModelMimic && nextTaskBtn) {
+                nextTaskBtn.style.display = 'flex';
+            } else if (isPythonRecap) {
+                if (nextQuestionBtn) nextQuestionBtn.style.display = 'flex';
+                if (endBtn) endBtn.style.display = 'flex';
+            }
+            
             if (statusIndicator) {
                 statusIndicator.textContent = 'Active';
                 statusIndicator.classList.add('active');
@@ -684,17 +752,25 @@ function updateGameControls(status) {
             }
             break;
         case 'waiting-next':
-            if (nextBtn) nextBtn.style.display = 'flex';
             if (pauseBtn) pauseBtn.style.display = 'flex';
+            
+            // Show appropriate next button based on mode
+            if (isModelMimic && nextTaskBtn) {
+                nextTaskBtn.style.display = 'flex';
+            } else if (isPythonRecap && nextQuestionBtn) {
+                nextQuestionBtn.style.display = 'flex';
+            }
+            
             if (statusIndicator) {
                 statusIndicator.textContent = 'Waiting';
                 statusIndicator.classList.add('waiting');
             }
             break;
         case 'complete':
-            // Hide all game control buttons when quiz is complete
+            // Hide all game control buttons when quiz/tasks are complete
             if (statusIndicator) {
-                statusIndicator.textContent = 'Quiz Complete';
+                const completionText = isModelMimic ? 'Tasks Complete' : 'Quiz Complete';
+                statusIndicator.textContent = completionText;
                 statusIndicator.classList.add('complete');
             }
             break;
@@ -702,6 +778,14 @@ function updateGameControls(status) {
 }
 
 function startQuestionTimer() {
+    // Only start timer for Python Recap mode
+    const currentModeEl = document.querySelector('.panel-title');
+    const isPythonRecap = currentModeEl && currentModeEl.textContent.includes('Python Programming');
+    
+    if (!isPythonRecap) {
+        return;
+    }
+    
     currentTimeLeft = 20;
     autoEndCalled = false; // Reset the flag when starting a new timer
     const timerSection = document.getElementById('question-timer');
@@ -780,10 +864,35 @@ async function updateGameStatus() {
             if (result.success && result.data) {
                 const game = result.data;
                 
-                // Update current question display
+                // Update current question/task display based on mode
                 const currentQuestionEl = document.getElementById('current-question');
+                const infoTotalEl = document.querySelector('.info-total');
                 if (currentQuestionEl) {
-                    currentQuestionEl.textContent = game.currentQuestion || 1;
+                    if (game.currentMode === 'Model Mimic') {
+                        // For Model Mimic, check if tasks are completed
+                        const currentTask = game.currentTask || game.currentQuestion || 1;
+                        if (currentTask > 5) {
+                            currentQuestionEl.textContent = 'Tasks Ended';
+                            if (infoTotalEl) infoTotalEl.style.display = 'none';
+                        } else {
+                            currentQuestionEl.textContent = currentTask;
+                            if (infoTotalEl) infoTotalEl.style.display = 'inline';
+                        }
+                    } else if (game.currentMode === 'Python Recap') {
+                        // For Python Recap, check if quiz is completed
+                        const currentQuestion = game.currentQuestion || 1;
+                        if (currentQuestion > 20) {
+                            currentQuestionEl.textContent = 'Quiz Ended';
+                            if (infoTotalEl) infoTotalEl.style.display = 'none';
+                        } else {
+                            currentQuestionEl.textContent = currentQuestion;
+                            if (infoTotalEl) infoTotalEl.style.display = 'inline';
+                        }
+                    } else {
+                        // For default, show current question
+                        currentQuestionEl.textContent = game.currentQuestion || 1;
+                        if (infoTotalEl) infoTotalEl.style.display = 'inline';
+                    }
                 }
                 
                 // Update students count - get fresh student count
@@ -796,26 +905,40 @@ async function updateGameStatus() {
                     const studentsAnsweredEl = document.getElementById('students-answered');
                     const totalStudentsEl = document.getElementById('total-students');
                     if (studentsAnsweredEl && totalStudentsEl) {
-                        studentsAnsweredEl.textContent = game.questionsAttempted || 0;
+                        if (game.currentMode === 'Model Mimic') {
+                            // For Model Mimic, show active students
+                            studentsAnsweredEl.textContent = game.activeStudents || 0;
+                        } else {
+                            // For Python Recap, show students who answered current question
+                            studentsAnsweredEl.textContent = game.questionsAttempted || 0;
+                        }
                         totalStudentsEl.textContent = `/ ${numStudents}`;
                     }
                 }
                 
-                // Check if game is complete (question > 20)
-                if (game.currentQuestion > 20) {
-                    updateGameControls('complete');
-                    // Only show notification once when quiz completes
-                    if (!quizCompletionNotified) {
-                        showNotification('Quiz complete! All 20 questions have been answered.', 'success');
-                        quizCompletionNotified = true;
+                // Handle completion based on mode
+                if (game.currentMode === 'Python Recap') {
+                    // Check if Python Recap quiz is complete (question > 20)
+                    if (game.currentQuestion > 20) {
+                        updateGameControls('complete');
+                        // Only show notification once when quiz completes
+                        if (!quizCompletionNotified) {
+                            showNotification('Quiz complete! All 20 questions have been answered.', 'success');
+                            quizCompletionNotified = true;
+                        }
+                        return;
                     }
-                    return;
+                } else if (game.currentMode === 'Model Mimic') {
+                    // Check if Model Mimic tasks are complete (task > 5)
+                    if (game.currentQuestion > 5) {
+                        updateGameControls('complete');
+                        return;
+                    }
                 }
                 
                 // Update game controls based on status
                 if (game.isPaused === false) {
-                    // Game is active - check if we need to show next question button
-                    // This happens when time is up or instructor ended question early
+                    // Game is active - show appropriate controls for each mode
                     updateGameControls('active');
                 } else {
                     // Game is paused/waiting
@@ -827,3 +950,172 @@ async function updateGameStatus() {
         console.error('Error updating game status:', error);
     }
 }
+
+// Task Mode Management Functions
+async function loadCurrentMode() {
+    try {
+        const response = await fetch('/api/task/current');
+        const result = await response.json();
+        
+        
+        const currentModeText = document.getElementById('current-mode-text');
+        if (currentModeText) {
+            if (result.success && result.data) {
+                currentModeText.textContent = result.data.mode;
+                updateModeSelection(result.data.mode);
+            } else {
+                currentModeText.textContent = 'No mode selected';
+                updateModeSelection(null);
+            }
+        }
+    } catch (error) {
+        console.error('Error loading current mode:', error);
+        const currentModeText = document.getElementById('current-mode-text');
+        if (currentModeText) {
+            currentModeText.textContent = 'Error loading mode';
+        }
+    }
+}
+
+function updateModeSelection(currentMode) {
+    const modeCards = document.querySelectorAll('.mode-card');
+    modeCards.forEach(card => {
+        const cardMode = card.getAttribute('data-mode');
+        if (cardMode === currentMode) {
+            card.classList.add('selected');
+        } else {
+            card.classList.remove('selected');
+        }
+    });
+}
+
+async function setTaskMode(mode) {
+    try {
+        
+        const response = await fetch('/api/task/set-mode', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ mode: mode })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            // Update the current mode display
+            const currentModeText = document.getElementById('current-mode-text');
+            if (currentModeText) {
+                currentModeText.textContent = mode;
+            }
+            
+            // Update mode selection
+            updateModeSelection(mode);
+            
+            // Show success message with next step guidance
+            showNotification(`Mode set to: ${mode}. Game initialized and ready to start.`, 'success');
+            
+            // Show guidance notification after a short delay with more prominence
+            setTimeout(() => {
+                if (mode === 'Python Recap') {
+                    showNotification(`🎯 NEXT STEP: Click "Python Programming Recap" tab, then click "Start Game" to begin the quiz!`, 'info');
+                } else if (mode === 'Model Mimic') {
+                    showNotification(`🎯 NEXT STEP: Click "Deep Learning Tasks" tab, then click "Start Game" to allow students to begin!`, 'info');
+                }
+            }, 2500);
+            
+            // Show another reminder after more time and add visual attention to start button
+            setTimeout(() => {
+                showNotification(`⚠️ Students are waiting! Don't forget to start the game for them to participate.`, 'warning');
+                
+                // Add attention effect to start game button if it exists and is visible
+                const startGameBtn = document.getElementById('start-game-btn');
+                if (startGameBtn && startGameBtn.style.display !== 'none') {
+                    startGameBtn.classList.add('attention');
+                    startGameBtn.style.position = 'relative';
+                    
+                    // Remove attention effect after 10 seconds
+                    setTimeout(() => {
+                        startGameBtn.classList.remove('attention');
+                    }, 10000);
+                }
+            }, 8000);
+            
+            // Refresh the page after mode change to ensure proper display
+            setTimeout(() => {
+                window.location.reload();
+            }, 3000);
+            
+        } else {
+            showNotification(result.message || 'Failed to set mode', 'error');
+        }
+    } catch (error) {
+        console.error('Error setting task mode:', error);
+        showNotification('Error setting task mode', 'error');
+    }
+}
+
+function showNotification(message, type = 'info') {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+    notification.textContent = message;
+    
+    // Style the notification
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 1rem 1.5rem;
+        border-radius: 8px;
+        color: white;
+        font-weight: 500;
+        z-index: 10000;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    `;
+    
+    // Set background color based on type
+    if (type === 'success') {
+        notification.style.background = 'linear-gradient(135deg, #4caf50 0%, #45a049 100%)';
+    } else if (type === 'error') {
+        notification.style.background = 'linear-gradient(135deg, #f44336 0%, #d32f2f 100%)';
+    } else if (type === 'warning') {
+        notification.style.background = 'linear-gradient(135deg, #ff9800 0%, #f57c00 100%)';
+    } else {
+        notification.style.background = 'linear-gradient(135deg, #2196f3 0%, #1976d2 100%)';
+    }
+    
+    // Add to page
+    document.body.appendChild(notification);
+    
+    // Animate in
+    requestAnimationFrame(() => {
+        notification.style.transform = 'translateX(0)';
+        notification.style.opacity = '1';
+    });
+    
+    // Remove after 3 seconds
+    setTimeout(() => {
+        notification.style.transform = 'translateX(100%)';
+        notification.style.opacity = '0';
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.parentNode.removeChild(notification);
+            }
+        }, 300);
+    }, 3000);
+}
+
+// Initialize task mode event listeners
+document.addEventListener('DOMContentLoaded', function() {
+    // Add click listeners to mode selection buttons
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('mode-select-btn')) {
+            const mode = e.target.getAttribute('data-mode');
+            if (mode) {
+                setTaskMode(mode);
+            }
+        }
+    });
+});

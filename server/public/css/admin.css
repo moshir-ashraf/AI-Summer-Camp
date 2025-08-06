@@ -1041,3 +1041,197 @@ html::-webkit-scrollbar {
         min-width: 100%;
     }
 }
+
+/* Task Mode Panel Styles */
+#task-mode-panel {
+    display: none;
+}
+
+#task-mode-panel.active {
+    display: block;
+}
+
+.mode-selection-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.current-mode-display h3 {
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.current-mode-card {
+    background: linear-gradient(135deg, var(--primary-cyan) 0%, var(--primary-purple) 100%);
+    color: var(--text-white);
+    padding: 1.5rem;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 1.1rem;
+    font-weight: 500;
+    box-shadow: 0 8px 25px var(--shadow-dark);
+    border: 1px solid var(--border-cyan);
+}
+
+.current-mode-card i {
+    font-size: 1.5rem;
+    color: var(--admin-gold);
+}
+
+.mode-options h3 {
+    color: var(--text-primary);
+    margin-bottom: 1.5rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.mode-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.mode-card {
+    background: var(--bg-card);
+    border: 2px solid var(--border-light);
+    border-radius: 15px;
+    padding: 2rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+}
+
+.mode-card:hover {
+    border-color: var(--primary-cyan);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 35px var(--shadow-cyan);
+    background: rgba(44, 83, 100, 0.95);
+}
+
+.mode-card.selected {
+    border-color: var(--admin-gold);
+    background: rgba(255, 215, 0, 0.1);
+    box-shadow: 0 8px 25px var(--shadow-gold);
+}
+
+.mode-icon {
+    width: 70px;
+    height: 70px;
+    margin: 0 auto 1.5rem;
+    background: linear-gradient(135deg, var(--primary-cyan) 0%, var(--primary-purple) 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-white);
+    font-size: 1.8rem;
+    box-shadow: 0 4px 15px var(--shadow-cyan);
+}
+
+.mode-card h4 {
+    color: var(--text-white);
+    margin-bottom: 1rem;
+    font-size: 1.4rem;
+    font-weight: 700;
+}
+
+.mode-card p {
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 2rem;
+    font-size: 0.95rem;
+}
+
+.mode-select-btn {
+    background: linear-gradient(135deg, var(--primary-orange) 0%, #e55100 100%);
+    color: var(--text-white);
+    border: none;
+    padding: 1rem 2.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.mode-select-btn:hover {
+    background: linear-gradient(135deg, #e55100 0%, #bf360c 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(229, 81, 0, 0.4);
+}
+
+.mode-select-btn:active {
+    transform: translateY(0);
+}
+
+.mode-select-btn i {
+    font-size: 1.1rem;
+}
+
+/* Responsive design for task mode panel */
+@media (max-width: 768px) {
+    .mode-cards {
+        grid-template-columns: 1fr;
+    }
+    
+    .mode-selection-container {
+        gap: 1.5rem;
+    }
+    
+    .mode-card {
+        padding: 1.5rem;
+    }
+    
+    .mode-icon {
+        width: 60px;
+        height: 60px;
+        font-size: 1.5rem;
+    }
+}
+
+/* Pulse animation for Start Game button when attention needed */
+@keyframes pulseAttention {
+    0% {
+        box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7);
+        transform: scale(1);
+    }
+    50% {
+        box-shadow: 0 0 0 15px rgba(76, 175, 80, 0);
+        transform: scale(1.05);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(76, 175, 80, 0);
+        transform: scale(1);
+    }
+}
+
+.control-btn.attention {
+    animation: pulseAttention 2s infinite;
+}
+
+.control-btn.attention::before {
+    content: "👈 Click me!";
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--admin-gold);
+    color: var(--text-dark);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    white-space: nowrap;
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+}

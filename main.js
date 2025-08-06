@@ -19,7 +19,7 @@ let mainWindow;
 
 function startServer() {
   server = expressApp.listen(port, () => {
-    console.log(`🚀 Express app running at http://localhost:${port}`)
+    console.log(`Express app running at http://localhost:${port}`)
   })
   
   server.on('error', (err) => {
