@@ -15,6 +15,7 @@ router.get('/task2', render.renderTask2)
 router.get('/task3', render.renderTask3)
 router.get('/task4', render.renderTask4)
 router.get('/task5', render.renderTask5)
+router.get('/task-deep-learning', render.renderTaskDeepLearning)
 
 // Final route
 router.get('/final', render.renderFinal)

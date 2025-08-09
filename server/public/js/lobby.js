@@ -21,6 +21,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Go to sequential task based on next task number
                 window.location.href = `/task${taskNumber}`;
             }
+        } else if (currentMode === 'Deep Learning') {
+            // Go to neural network builder
+            window.location.href = `/task-deep-learning`;
         } else {
             // Default fallback
             window.location.href = `/task1-realtime`;
@@ -48,6 +51,9 @@ async function checkGameStatus() {
                     window.nextTask = game.currentQuestion || game.currentTask || 1;
                 } else if (game.currentMode === 'Python Recap') {
                     // For Python Recap, always go to real-time quiz
+                    window.nextTask = 1;
+                } else if (game.currentMode === 'Deep Learning') {
+                    // For Deep Learning, always go to neural network task
                     window.nextTask = 1;
                 }
                 
@@ -135,6 +141,19 @@ function updateGameStatusDisplay(game) {
             startBtn.disabled = true;
             startBtn.classList.add('disabled');
             btnText.textContent = 'Waiting for Deep Learning Tasks to Begin';
+            btnIcon.className = 'fas fa-clock';
+        }
+    } else if (game.currentMode === 'Deep Learning') {
+        // Deep Learning mode - neural network builder
+        if (game.isPaused === false) {
+            startBtn.disabled = false;
+            startBtn.classList.remove('disabled');
+            btnText.textContent = 'Build Neural Network';
+            btnIcon.className = 'fas fa-robot';
+        } else {
+            startBtn.disabled = true;
+            startBtn.classList.add('disabled');
+            btnText.textContent = 'Waiting for Neural Network Session to Start';
             btnIcon.className = 'fas fa-clock';
         }
     } else {

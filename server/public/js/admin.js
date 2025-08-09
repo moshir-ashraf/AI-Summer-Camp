@@ -449,6 +449,7 @@ async function startGame() {
                 
                 // Only start timer for Python Recap mode
                 // Model Mimic mode is self-paced and admin-controlled
+                // Deep Learning mode is also self-paced
                 const currentModeEl = document.querySelector('.panel-title');
                 const isPythonRecap = currentModeEl && currentModeEl.textContent.includes('Python Programming');
                 
@@ -708,6 +709,7 @@ function updateGameControls(status) {
     // Use the global currentMode variable passed from the server
     const isModelMimic = window.currentMode === 'Model Mimic';
     const isPythonRecap = window.currentMode === 'Python Recap';
+    const isDeepLearning = window.currentMode === 'Deep Learning';
     
     
     // Hide all buttons first
@@ -734,6 +736,8 @@ function updateGameControls(status) {
             // Show appropriate next button based on mode
             if (isModelMimic && nextTaskBtn) {
                 nextTaskBtn.style.display = 'flex';
+            } else if (isDeepLearning && nextTaskBtn) {
+                nextTaskBtn.style.display = 'flex';
             } else if (isPythonRecap) {
                 if (nextQuestionBtn) nextQuestionBtn.style.display = 'flex';
                 if (endBtn) endBtn.style.display = 'flex';
@@ -757,6 +761,8 @@ function updateGameControls(status) {
             // Show appropriate next button based on mode
             if (isModelMimic && nextTaskBtn) {
                 nextTaskBtn.style.display = 'flex';
+            } else if (isDeepLearning && nextTaskBtn) {
+                nextTaskBtn.style.display = 'flex';
             } else if (isPythonRecap && nextQuestionBtn) {
                 nextQuestionBtn.style.display = 'flex';
             }
@@ -769,7 +775,11 @@ function updateGameControls(status) {
         case 'complete':
             // Hide all game control buttons when quiz/tasks are complete
             if (statusIndicator) {
-                const completionText = isModelMimic ? 'Tasks Complete' : 'Quiz Complete';
+                let completionText = 'Complete';
+                if (isModelMimic) completionText = 'Tasks Complete';
+                else if (isPythonRecap) completionText = 'Quiz Complete';
+                else if (isDeepLearning) completionText = 'Neural Network Complete';
+                
                 statusIndicator.textContent = completionText;
                 statusIndicator.classList.add('complete');
             }
@@ -888,6 +898,16 @@ async function updateGameStatus() {
                             currentQuestionEl.textContent = currentQuestion;
                             if (infoTotalEl) infoTotalEl.style.display = 'inline';
                         }
+                    } else if (game.currentMode === 'Deep Learning') {
+                        // For Deep Learning, show session status
+                        const currentSession = game.currentQuestion || 1;
+                        if (currentSession > 1) {
+                            currentQuestionEl.textContent = 'Session Ended';
+                            if (infoTotalEl) infoTotalEl.style.display = 'none';
+                        } else {
+                            currentQuestionEl.textContent = 'Active Session';
+                            if (infoTotalEl) infoTotalEl.style.display = 'none';
+                        }
                     } else {
                         // For default, show current question
                         currentQuestionEl.textContent = game.currentQuestion || 1;
@@ -907,6 +927,9 @@ async function updateGameStatus() {
                     if (studentsAnsweredEl && totalStudentsEl) {
                         if (game.currentMode === 'Model Mimic') {
                             // For Model Mimic, show active students
+                            studentsAnsweredEl.textContent = game.activeStudents || 0;
+                        } else if (game.currentMode === 'Deep Learning') {
+                            // For Deep Learning, show active students working on neural networks
                             studentsAnsweredEl.textContent = game.activeStudents || 0;
                         } else {
                             // For Python Recap, show students who answered current question
@@ -931,6 +954,12 @@ async function updateGameStatus() {
                 } else if (game.currentMode === 'Model Mimic') {
                     // Check if Model Mimic tasks are complete (task > 5)
                     if (game.currentQuestion > 5) {
+                        updateGameControls('complete');
+                        return;
+                    }
+                } else if (game.currentMode === 'Deep Learning') {
+                    // Check if Deep Learning task is complete (single task with neural network)
+                    if (game.currentQuestion > 1) {
                         updateGameControls('complete');
                         return;
                     }
@@ -1021,6 +1050,8 @@ async function setTaskMode(mode) {
                     showNotification(`🎯 NEXT STEP: Click "Python Programming Recap" tab, then click "Start Game" to begin the quiz!`, 'info');
                 } else if (mode === 'Model Mimic') {
                     showNotification(`🎯 NEXT STEP: Click "Deep Learning Tasks" tab, then click "Start Game" to allow students to begin!`, 'info');
+                } else if (mode === 'Deep Learning') {
+                    showNotification(`🎯 NEXT STEP: Click "Neural Network Builder" tab, then click "Start Game" to allow students to build their networks!`, 'info');
                 }
             }, 2500);
             

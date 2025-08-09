@@ -45,8 +45,8 @@ class Task {
   }
 
   static async create(mode) {
-    if (!mode || (mode !== 'Python Recap' && mode !== 'Model Mimic')) {
-      return new Result(0, null, "Invalid mode. Must be 'Python Recap' or 'Model Mimic'");
+    if (!mode || (mode !== 'Python Recap' && mode !== 'Model Mimic' && mode !== 'Deep Learning')) {
+      return new Result(0, null, "Invalid mode. Must be 'Python Recap', 'Model Mimic', or 'Deep Learning'");
     }
 
     try {
@@ -72,8 +72,8 @@ class Task {
   }
 
   static async setMode(mode) {
-    if (!mode || (mode !== 'Python Recap' && mode !== 'Model Mimic')) {
-      return new Result(0, null, "Invalid mode. Must be 'Python Recap' or 'Model Mimic'");
+    if (!mode || (mode !== 'Python Recap' && mode !== 'Model Mimic' && mode !== 'Deep Learning')) {
+      return new Result(0, null, "Invalid mode. Must be 'Python Recap', 'Model Mimic', or 'Deep Learning'");
     }
 
     try {
@@ -105,6 +105,11 @@ class Task {
   static async isModelMimic() {
     const mode = await Task.getCurrentMode();
     return mode === 'Model Mimic';
+  }
+
+  static async isDeepLearning() {
+    const mode = await Task.getCurrentMode();
+    return mode === 'Deep Learning';
   }
 
   static async delete(taskId) {

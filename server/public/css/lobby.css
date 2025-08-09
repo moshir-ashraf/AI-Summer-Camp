@@ -167,6 +167,30 @@ body::-webkit-scrollbar {
     max-width: 100%;
 }
 
+.conv-info {
+    margin-top: 1.5rem;
+    padding: 1.5rem;
+    background: rgba(156, 39, 176, 0.1);
+    border: 1px solid rgba(156, 39, 176, 0.3);
+    border-radius: 12px;
+    border-left: 4px solid #9c27b0;
+}
+
+.conv-title {
+    font-size: 1.3rem;
+    color: #9c27b0;
+    margin-bottom: 1rem;
+    font-weight: 600;
+    text-shadow: 0 0 10px rgba(156, 39, 176, 0.3);
+}
+
+.conv-text {
+    font-size: 1rem;
+    color: #a7c7ce;
+    line-height: 1.7;
+    text-align: left;
+}
+
 /* Action Section */
 .action-section {
     margin-top: 2rem;

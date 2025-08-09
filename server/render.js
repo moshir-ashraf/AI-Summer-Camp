@@ -52,6 +52,9 @@ const renderLobby = async (req, res) => {
         // Fallback to user progress if game state unavailable
         nextTask = (user.lastTaskCompleted || 0) + 1;
       }
+    } else if (currentMode === 'Deep Learning') {
+      maxTasks = 1; // Single neural network task
+      nextTask = 1; // Always redirect to the deep learning task
     }
     
     // Check if user has completed all available tasks
@@ -64,6 +67,11 @@ const renderLobby = async (req, res) => {
       if (user.lastTaskCompleted >= 5) {
         return res.redirect('/final');
       }
+    } else if (currentMode === 'Deep Learning') {
+      // For Deep Learning, check if task is completed
+      taskCompleted = user.lastTaskCompleted >= 1;
+      
+      // Don't redirect to final - allow retrying the neural network task
     }
     // Python Recap mode should never redirect to final - it's a repeatable real-time quiz
     
@@ -580,6 +588,54 @@ const renderTask5 = async (req, res) => {
   }
 };
 
+const renderTaskDeepLearning = async (req, res) => {
+  // Check authentication
+  if (!req.session.user) {
+    return res.redirect('/');
+  }
+
+  try {
+    // Get current task mode
+    const currentMode = await Task.getCurrentMode();
+    
+    // Allow instructors to preview regardless of current mode
+    // Only restrict students if current mode is not Deep Learning
+    if (req.session.user.role !== 'INSTRUCTOR' && currentMode !== 'Deep Learning') {
+      return res.redirect('/lobby');
+    }
+
+    // Get current user data
+    const userResult = await User.get(req.session.user._id, '_id');
+    let user = req.session.user;
+    if (userResult.success.status) {
+      req.session.user.lastTaskCompleted = userResult.data.lastTaskCompleted;
+      req.session.user.score = userResult.data.score;
+      user = req.session.user;
+    }
+
+    // Check if game is active
+    const gameResult = await Game.getCurrentGame();
+    let gameActive = false;
+    if (gameResult.success.status && gameResult.data) {
+      gameActive = !gameResult.data.isPaused;
+    }
+
+    // Render the deep learning task
+    res.render('task-deep-learning', {
+      user: user,
+      gameActive: gameActive,
+      maxTasks: 1,
+      currentMode: currentMode
+    });
+  } catch (error) {
+    console.error('Error in renderTaskDeepLearning:', error);
+    if (req.session.user.role === 'INSTRUCTOR') {
+      return res.redirect('/admin');
+    }
+    return res.redirect('/lobby');
+  }
+};
+
 module.exports = {
   renderIntro,
   renderLobby,
@@ -590,6 +646,7 @@ module.exports = {
   renderTask3,
   renderTask4,
   renderTask5,
+  renderTaskDeepLearning,
   renderFinal,
   handleDefaultRoute
 };

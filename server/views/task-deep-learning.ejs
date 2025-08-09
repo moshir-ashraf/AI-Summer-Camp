@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Summer Camp - Neural Network Builder</title>
+    <link rel="stylesheet" href="/css/task-deep-learning.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-top">
+                <a href="<%= user.role === 'INSTRUCTOR' ? '/admin' : '/lobby' %>" class="back-btn">
+                    <i class="fas fa-arrow-left"></i>
+                    <%= user.role === 'INSTRUCTOR' ? 'Back to Admin' : 'Back to Lobby' %>
+                </a>
+                <a href="/logout" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </a>
+            </div>
+            <div class="header-content">
+                <div class="user-info">
+                    <h1><i class="fas fa-robot"></i><span class="title-text">Neural Network Builder</span></h1>
+                    <p>Build and train a neural network to classify Thanos vs Grimace!</p>
+                </div>
+                <div class="game-info">
+                    <div class="score-display">
+                        <i class="fas fa-star"></i>
+                        <span id="current-score"><%= user.score || 0 %></span>
+                    </div>
+                    <div class="user-name">
+                        <i class="fas fa-user"></i>
+                        <span><%= user.name %></span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Instructions Panel -->
+            <div class="instructions-panel">
+                <h2><i class="fas fa-info-circle"></i> Your Mission</h2>
+                <div class="mission-content">
+                    <p>Create a neural network that can distinguish between <strong>Thanos</strong> and <strong>Grimace</strong> images!</p>
+                    
+                    <!-- Story Section -->
+                    <div class="story-section">
+                        <h3>The Story Behind This Challenge</h3>
+                        <p>Avengers: Infinity War is one of my favorite movies not only from the superhero genre, but of all time. Besides an insane character crossover, it features quite a few scenes with pop culture references. In one of them, Peter Quill (aka Star-Lord) refers to Thanos as "Grimace".</p>
+                        
+                        <p>For those who don't know, Grimace is one of McDonaldland's characters. These were quite popular in the 80s and 90s (which fits with Quill's time in Earth as a kid). This reference inspired cosplayers Kittie Cosplay and Banana Steve in making an even crazier crossover: <strong>Grimos</strong>. This made me wonder: can we create an algorithm capable of distinguishing between these two purple characters?</p>
+                    </div>
+                    
+                    <div class="objectives">
+                        <div class="objective">
+                            <i class="fas fa-bullseye"></i>
+                            <span>Achieve >92% accuracy to earn points</span>
+                        </div>
+                        <div class="objective">
+                            <i class="fas fa-layer-group"></i>
+                            <span>Add layers to build your network architecture</span>
+                        </div>
+                        <div class="objective">
+                            <i class="fas fa-brain"></i>
+                            <span>Train your model and test its performance</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Preview -->
+            <div class="data-preview">
+                <h3><i class="fas fa-images"></i> Training Data Preview</h3>
+                <div class="preview-grid">
+                    <div class="class-preview">
+                        <h4>Thanos</h4>
+                        <div class="image-gallery">
+                            <!-- Main display image -->
+                            <div class="main-image-container">
+                                <div class="slide" id="thanos-main-slide">
+                                    <div class="numbertext">1 / 5</div>
+                                    <img src="/images/DL/thanos/thanos_(28).jpg" alt="Thanos sample 1" class="main-image">
+                                </div>
+                                <!-- Navigation arrows -->
+                                <a class="gallery-prev" onclick="changeSlide('thanos', -1)">&#10094;</a>
+                                <a class="gallery-next" onclick="changeSlide('thanos', 1)">&#10095;</a>
+                            </div>
+                            <!-- Thumbnail row -->
+                            <div class="thumbnail-row">
+                                <div class="thumbnail-container">
+                                    <img class="thumbnail active" src="/images/DL/thanos/thanos_(28).jpg" onclick="showSlide('thanos', 1)" alt="Thanos sample 1">
+                                </div>
+                                <div class="thumbnail-container">
+                                    <img class="thumbnail" src="/images/DL/thanos/thanos_(29).jpg" onclick="showSlide('thanos', 2)" alt="Thanos sample 2">
+                                </div>
+                                <div class="thumbnail-container">
+                                    <img class="thumbnail" src="/images/DL/thanos/thanos_(41).jpg" onclick="showSlide('thanos', 3)" alt="Thanos sample 3">
+                                </div>
+                                <div class="thumbnail-container">
+                                    <img class="thumbnail" src="/images/DL/thanos/thanos_(21).jpg" onclick="showSlide('thanos', 4)" alt="Thanos sample 4">
+                                </div>
+                                <div class="thumbnail-container">
+                                    <img class="thumbnail" src="/images/DL/thanos/thanos_(32).jpg" onclick="showSlide('thanos', 5)" alt="Thanos sample 5">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="class-preview">
+                        <h4>Grimace</h4>
+                        <div class="image-gallery">
+                            <!-- Main display image -->
+                            <div class="main-image-container">
+                                <div class="slide" id="grimace-main-slide">
+                                    <div class="numbertext">1 / 5</div>
+                                    <img src="/images/DL/grimace/grimace_(176).jpg" alt="Grimace sample 1" class="main-image">
+                                </div>
+                                <!-- Navigation arrows -->
+                                <a class="gallery-prev" onclick="changeSlide('grimace', -1)">&#10094;</a>
+                                <a class="gallery-next" onclick="changeSlide('grimace', 1)">&#10095;</a>
+                            </div>
+                            <!-- Thumbnail row -->
+                            <div class="thumbnail-row">
+                                <div class="thumbnail-container">
+                                    <img class="thumbnail active" src="/images/DL/grimace/grimace_(176).jpg" onclick="showSlide('grimace', 1)" alt="Grimace sample 1">
+                                </div>
+                                <div class="thumbnail-container">
+                                    <img class="thumbnail" src="/images/DL/grimace/grimace_(202).jpg" onclick="showSlide('grimace', 2)" alt="Grimace sample 2">
+                                </div>
+                                <div class="thumbnail-container">
+                                    <img class="thumbnail" src="/images/DL/grimace/grimace_(44).jpg" onclick="showSlide('grimace', 3)" alt="Grimace sample 3">
+                                </div>
+                                <div class="thumbnail-container">
+                                    <img class="thumbnail" src="/images/DL/grimace/grimace_(19).jpg" onclick="showSlide('grimace', 4)" alt="Grimace sample 4">
+                                </div>
+                                <div class="thumbnail-container">
+                                    <img class="thumbnail" src="/images/DL/grimace/grimace_(26).jpg" onclick="showSlide('grimace', 5)" alt="Grimace sample 5">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Network Builder -->
+            <div class="network-builder">
+                <h3><i class="fas fa-cogs"></i> Build Your Neural Network</h3>
+                
+                <!-- Current Architecture Display -->
+                <div class="architecture-display">
+                    <div class="layer-list" id="layer-list">
+                        <div class="layer input-layer">
+                            <div class="layer-info">
+                                <i class="fas fa-image"></i>
+                                <span>Input Layer</span>
+                                <small>Shape: [224, 224, 3] - RGB Images (224x224 pixels)</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Layer Controls -->
+                <div class="layer-controls">
+                    <h4>Add Layers</h4>
+                    <div class="layer-buttons">
+                        <button class="layer-btn" data-layer="dense">
+                            <span><i class="fas fa-circle"></i> Dense Layer</span>
+                            <small>Fully connected neurons</small>
+                        </button>
+                        <button class="layer-btn" data-layer="conv2d">
+                            <span><i class="fas fa-th"></i> Conv2D Layer</span>
+                            <small>Convolutional filters</small>
+                        </button>
+                        <button class="layer-btn" data-layer="maxpool">
+                            <span><i class="fas fa-compress"></i> MaxPool2D</span>
+                            <small>Dimensionality reduction</small>
+                        </button>
+                        <button class="layer-btn" data-layer="flatten">
+                            <span><i class="fas fa-arrows-alt"></i> Flatten</span>
+                            <small>Convert to 1D</small>
+                        </button>
+                        <button class="layer-btn" data-layer="dropout">
+                            <span><i class="fas fa-random"></i> Dropout</span>
+                            <small>Prevent overfitting</small>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Training Controls -->
+                <div class="training-controls">
+                    <div class="training-params">
+                        <div class="param-group">
+                            <label for="epochs">Training Epochs:</label>
+                            <select id="epochs">
+                                <option value="5">5 epochs</option>
+                                <option value="10" selected>10 epochs</option>
+                                <option value="15">15 epochs</option>
+                                <option value="20">20 epochs</option>
+                            </select>
+                        </div>
+                        <div class="param-group">
+                            <label for="batch-size">Batch Size:</label>
+                            <select id="batch-size">
+                                <option value="8">8</option>
+                                <option value="16" selected>16</option>
+                                <option value="32">32</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button id="train-btn" class="action-btn train">
+                            <i class="fas fa-play"></i>
+                            Train Model
+                        </button>
+                        <button id="test-btn" class="action-btn test" disabled>
+                            <i class="fas fa-vial"></i>
+                            Test Model
+                        </button>
+                        <button id="reset-btn" class="action-btn reset">
+                            <i class="fas fa-redo"></i>
+                            Reset Network
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Training Progress -->
+            <div class="training-progress" id="training-progress" style="display: none;">
+                <h3><i class="fas fa-chart-line"></i> Training Progress</h3>
+                <div class="progress-content">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill"></div>
+                        <span class="progress-text" id="progress-text">0%</span>
+                    </div>
+                    <div class="training-stats">
+                        <div class="stat">
+                            <span class="stat-label">Current Epoch:</span>
+                            <span class="stat-value" id="current-epoch">0</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-label">Training Loss:</span>
+                            <span class="stat-value" id="training-loss">-</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-label">Training Accuracy:</span>
+                            <span class="stat-value" id="training-accuracy">-</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="loss-chart">
+                    <canvas id="loss-chart" width="400" height="200"></canvas>
+                </div>
+            </div>
+
+            <!-- Results Display -->
+            <div class="results-display" id="results-display" style="display: none;">
+                <h3></i> Model Performance</h3>
+                <div class="results-content">
+                    <div class="accuracy-display">
+                        <div class="accuracy-circle">
+                            <span class="accuracy-value" id="accuracy-value">0%</span>
+                            <span class="accuracy-label">Test Accuracy</span>
+                        </div>
+                    </div>
+                    <div class="performance-details">
+                        <div class="detail">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Correct Predictions: <span id="correct-predictions">0</span></span>
+                        </div>
+                        <div class="detail">
+                            <i class="fas fa-times-circle"></i>
+                            <span>Incorrect Predictions: <span id="incorrect-predictions">0</span></span>
+                        </div>
+                        <div class="detail">
+                            <i class="fas fa-database"></i>
+                            <span>Test Set Size: <span id="test-size">0</span></span>
+                        </div>
+                    </div>
+                    <div class="score-earned" id="score-earned" style="display: none;">
+                        <i class="fas fa-star"></i>
+                        <span>Congratulations! You earned <span id="points-earned">0</span> points!</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal for Layer Configuration -->
+        <div class="modal-overlay" id="layer-modal-overlay" style="display: none;">
+            <div class="modal" id="layer-modal">
+                <div class="modal-header">
+                    <h3 id="modal-title">Configure Layer</h3>
+                    <button class="modal-close" id="modal-close">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body" id="modal-body">
+                    <!-- Layer configuration will be loaded here -->
+                </div>
+                <div class="modal-footer">
+                    <button class="btn-cancel" id="modal-cancel">Cancel</button>
+                    <button class="btn-confirm" id="modal-confirm">Add Layer</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading Overlay -->
+        <div class="loading-overlay" id="loading-overlay" style="display: none;">
+            <div class="loading-content">
+                <div class="spinner"></div>
+                <p id="loading-text">Loading...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.gameConfig = {
+            user: {
+                id: "<%= user.id %>",
+                name: "<%= user.name %>",
+                score: "<%= user.score || 0 %>",
+                role: "<%= user.role %>"
+            },
+            gameActive: "<%= gameActive ? 'true' : 'false' %>",
+            maxTasks: "<%= maxTasks %>"
+        };
+    </script>
+    <script src="/js/task-deep-learning.js"></script>
+</body>
+</html>

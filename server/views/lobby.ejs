@@ -38,6 +38,19 @@
                         These models process information through multiple layers, extracting features and making connections to produce 
                         intelligent observational insights and concluding outputs that can solve complex problems.
                     </p>
+                <% } else if (currentMode === 'Deep Learning') { %>
+                    <h2 class="description-title">Neural Network Builder</h2>
+                    <p class="description-text">
+                        Deep learning is a field of machine learning that uses multi-layered neural networks to automatically learn and represent features from data, enabling a computer to make predictions and decisions without explicit programming for every single task.
+                    </p>
+                    <div class="conv-info">
+                        <h3 class="conv-title">Convolutional Layers</h3>
+                        <p class="conv-text">
+                            Convolutional layers use filters to detect features like edges, shapes, and patterns in images. 
+                            They scan across the image to extract important visual information that helps the network 
+                            distinguish between different objects, like telling Thanos apart from Grimace!
+                        </p>
+                    </div>
                 <% } else { %>
                     <h2 class="description-title">How Python Works</h2>
                     <p class="description-text">
@@ -60,9 +73,9 @@
     </div>
 
     <script>
-        window.nextTask = <%= nextTask %>;
+        window.nextTask = "<%= nextTask %>";
         window.currentMode = "<%= currentMode %>";
-        window.userLastTaskCompleted = <%= user.lastTaskCompleted || 0 %>;
+        window.userLastTaskCompleted = "<%= user.lastTaskCompleted || 0 %>";
     </script>
     <script src="/js/lobby.js"></script>
 </body>

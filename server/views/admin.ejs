@@ -16,7 +16,7 @@
                 <div class="admin-icon">
                     <i class="fas fa-crown"></i>
                 </div>
-                <h2 class="sidebar-title">Admin Panel</h2>
+                <h2 class="sidebar-title">Instructor Panel</h2>
                 <p class="admin-name"><%= user.name %></p>
             </div>
             
@@ -39,6 +39,11 @@
                         <li class="nav-item" data-panel="task1">
                             <i class="fas fa-brain"></i>
                             <span>Deep Learning Tasks</span>
+                        </li>
+                    <% } else if (currentMode === 'Deep Learning') { %>
+                        <li class="nav-item" data-panel="task1">
+                            <i class="fas fa-robot"></i>
+                            <span>Neural Network Builder</span>
                         </li>
                     <% } else { %>
                         <li class="nav-item" data-panel="task1">
@@ -183,6 +188,18 @@
                                     Select Mode
                                 </button>
                             </div>
+
+                            <div class="mode-card" data-mode="Deep Learning">
+                                <div class="mode-icon">
+                                    <i class="fas fa-robot"></i>
+                                </div>
+                                <h4>Deep Learning</h4>
+                                <p>Interactive neural network builder using TensorFlow.js to classify images between Thanos and Grimace characters.</p>
+                                <button class="mode-select-btn" data-mode="Deep Learning">
+                                    <i class="fas fa-play"></i>
+                                    Select Mode
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -198,6 +215,9 @@
                         <% } else if (currentMode === 'Model Mimic') { %>
                             <i class="fas fa-brain"></i>
                             Deep Learning Tasks
+                        <% } else if (currentMode === 'Deep Learning') { %>
+                            <i class="fas fa-robot"></i>
+                            Neural Network Builder
                         <% } else { %>
                             <i class="fas fa-cogs"></i>
                             Game Controls - Select Task Mode First
@@ -230,6 +250,14 @@
                                 <i class="fas fa-eye"></i>
                                 Preview Task 5
                             </a>
+                        <% } else if (currentMode === 'Deep Learning') { %>
+                            <a href="/task-deep-learning" class="task-btn" target="_blank">
+                                <i class="fas fa-eye"></i>
+                                Preview Neural Network Builder
+                            </a>
+                        <% } else { %>
+                                Preview Task 5
+                            </a>
                         <% } %>
                     </div>
                 </div>
@@ -242,6 +270,8 @@
                                 Quiz Status
                             <% } else if (currentMode === 'Model Mimic') { %>
                                 Task Progress Status
+                            <% } else if (currentMode === 'Deep Learning') { %>
+                                Neural Network Session Status
                             <% } else { %>
                                 Game Status
                             <% } %>
@@ -256,6 +286,10 @@
                                     <span class="info-label">Current Task Phase:</span>
                                     <span class="info-value" id="current-question">1</span>
                                     <span class="info-total">/ 5</span>
+                                <% } else if (currentMode === 'Deep Learning') { %>
+                                    <span class="info-label">Session Status:</span>
+                                    <span class="info-value" id="current-question">Active Session</span>
+                                    <span class="info-total" style="display: none;">/ 1</span>
                                 <% } else { %>
                                     <span class="info-label">Current Item:</span>
                                     <span class="info-value" id="current-question">1</span>
@@ -273,6 +307,10 @@
                                     <span class="info-total" id="total-students">/ 0</span>
                                 <% } else if (currentMode === 'Model Mimic') { %>
                                     <span class="info-label">Students Active:</span>
+                                    <span class="info-value" id="students-answered">0</span>
+                                    <span class="info-total" id="total-students">/ 0</span>
+                                <% } else if (currentMode === 'Deep Learning') { %>
+                                    <span class="info-label">Students Building:</span>
                                     <span class="info-value" id="students-answered">0</span>
                                     <span class="info-total" id="total-students">/ 0</span>
                                 <% } else { %>
