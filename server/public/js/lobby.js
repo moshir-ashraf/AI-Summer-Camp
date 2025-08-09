@@ -89,6 +89,9 @@ function updateGameStatusDisplay(game) {
     
     if (!startBtn || !btnText || !btnIcon) return;
     
+    // Update the descriptive text section based on current mode
+    updateDescriptiveText(game.currentMode);
+    
     // Check if a task mode is selected
     if (!game.currentMode) {
         startBtn.disabled = true;
@@ -169,5 +172,56 @@ function updateGameStatusDisplay(game) {
             btnText.textContent = 'Waiting for Game to Start';
             btnIcon.className = 'fas fa-clock';
         }
+    }
+}
+
+function updateDescriptiveText(currentMode) {
+    const descriptionTitle = document.querySelector('.description-title');
+    const descriptionText = document.querySelector('.description-text');
+    const convInfo = document.querySelector('.conv-info');
+    
+    if (!descriptionTitle || !descriptionText) return;
+    
+    // Remove any existing conv-info section first
+    if (convInfo) {
+        convInfo.remove();
+    }
+    
+    if (currentMode === 'Model Mimic') {
+        descriptionTitle.textContent = 'How Deep Learning Works';
+        descriptionText.innerHTML = `
+            Deep learning is about feeding input data into neural network models that train and learn patterns from the data. 
+            These models process information through multiple layers, extracting features and making connections to produce 
+            intelligent observational insights and concluding outputs that can solve complex problems.
+        `;
+    } else if (currentMode === 'Deep Learning') {
+        descriptionTitle.textContent = 'Neural Network Builder';
+        descriptionText.innerHTML = `
+            Deep learning is a field of machine learning that uses multi-layered neural networks to automatically learn and represent features from data, enabling a computer to make predictions and decisions without explicit programming for every single task.
+        `;
+        
+        // Add the conv-info section for Deep Learning mode
+        const aiDescription = document.querySelector('.ai-description');
+        if (aiDescription) {
+            const convInfoHTML = `
+                <div class="conv-info">
+                    <h3 class="conv-title">Convolutional Layers</h3>
+                    <p class="conv-text">
+                        Convolutional layers use filters to detect features like edges, shapes, and patterns in images. 
+                        They scan across the image to extract important visual information that helps the network 
+                        distinguish between different objects, like telling Thanos apart from Grimace!
+                    </p>
+                </div>
+            `;
+            aiDescription.insertAdjacentHTML('beforeend', convInfoHTML);
+        }
+    } else {
+        // Default to Python Recap mode
+        descriptionTitle.textContent = 'How Python Works';
+        descriptionText.innerHTML = `
+            Python is a high-level programming language designed for readability and simplicity. 
+            It uses straightforward syntax to let programmers write clear and concise code. 
+            Python runs instructions line by line and supports many libraries that make complex tasks easier to implement.
+        `;
     }
 }
