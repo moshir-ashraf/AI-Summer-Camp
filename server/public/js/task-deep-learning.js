@@ -1115,23 +1115,36 @@ class DeepLearningTask {
             return { isValid: true }; // Will be caught by other validation
         }
         
-        // Check for Dense layers without proper flattening
+        // Check for proper layer ordering and architecture
         let hasConvLayers = false;
         let hasSeenFlattenAfterConv = false;
         let hasFlattenLayer = false;
+        let hasSeenFlatten = false;
+        let hasDenseLayer = false;
         
         for (let i = 0; i < nonOutputLayers.length; i++) {
             const layer = nonOutputLayers[i];
             
             if (layer.type === 'conv2d' || layer.type === 'maxpool') {
+                // Check if Conv2D/MaxPool layers are placed after Flatten layer
+                if (hasSeenFlatten) {
+                    return {
+                        isValid: false,
+                        error: 'Error: Conv2D and MaxPool layers cannot be placed after a Flatten layer! Flatten converts 2D/3D data to 1D, but Conv2D/MaxPool layers need 2D/3D input. Place all Conv2D and MaxPool layers before the Flatten layer.'
+                    };
+                }
+                
                 hasConvLayers = true;
                 hasSeenFlattenAfterConv = false; // Reset when we see new conv layers
             } else if (layer.type === 'flatten') {
                 hasFlattenLayer = true;
+                hasSeenFlatten = true;
                 if (hasConvLayers) {
                     hasSeenFlattenAfterConv = true;
                 }
             } else if (layer.type === 'dense') {
+                hasDenseLayer = true;
+                
                 // Case 1: Dense after Conv2D without Flatten
                 if (hasConvLayers && !hasSeenFlattenAfterConv) {
                     return {
@@ -1148,6 +1161,15 @@ class DeepLearningTask {
                     };
                 }
             }
+            // Dropout layers can be placed anywhere, so no validation needed for them
+        }
+        
+        // Check if network has convolutional layers but no dense layers for classification
+        if (hasConvLayers && !hasDenseLayer) {
+            return {
+                isValid: false,
+                error: 'Error: Neural networks with convolutional layers need at least one Dense layer for classification! Conv2D layers extract features from images, but you need Dense layers to make predictions. Add a Flatten layer followed by at least one Dense layer.'
+            };
         }
         
         return { isValid: true };

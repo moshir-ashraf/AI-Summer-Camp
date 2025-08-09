@@ -71,7 +71,7 @@ const renderLobby = async (req, res) => {
       // For Deep Learning, check if task is completed
       taskCompleted = user.lastTaskCompleted >= 1;
       
-      // Don't redirect to final - allow retrying the neural network task
+      // No automatic redirect to final - let users navigate manually
     }
     // Python Recap mode should never redirect to final - it's a repeatable real-time quiz
     
@@ -109,6 +109,10 @@ const renderLobby = async (req, res) => {
       if (user.lastTaskCompleted >= 5) {
         return res.redirect('/final');
       }
+    } else if (currentMode === 'Deep Learning') {
+      taskCompleted = user.lastTaskCompleted >= 1;
+      
+      // No automatic redirect to final - let users navigate manually
     }
     // Python Recap mode should never redirect to final - it's a repeatable real-time quiz
     
@@ -163,26 +167,13 @@ const renderFinal = async (req, res) => {
       user = req.session.user;
     }
     
-    const lastCompleted = user.lastTaskCompleted || 0;
-    
-    // Only allow final page if task 1 is completed
-    if (lastCompleted >= 1) {
-      res.render('final', { user: user });
-    } else {
-      // Redirect to lobby if trying to access final page without completing task 1
-      return res.redirect('/lobby');
-    }
+    // Always render final page - no validation needed in Electron app
+    res.render('final', { user: user });
   } catch (error) {
     console.error('Error refreshing user data:', error);
     // Fallback to session data
     const user = req.session.user;
-    const lastCompleted = user.lastTaskCompleted || 0;
-    
-    if (lastCompleted >= 1) {
-      res.render('final', { user: user });
-    } else {
-      return res.redirect('/lobby');
-    }
+    res.render('final', { user: user });
   }
 }
 
